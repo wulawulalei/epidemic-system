@@ -1,0 +1,100 @@
+.btn {
+    display: inline-block;
+    line-height: 1;
+    text-align: center;
+
+    min-width: 80px;
+    margin: 0;
+    padding: 10px 15px;
+
+    font-size: 1rem;
+    color: #606266;
+    background: #fff;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-appearance: none;
+    box-sizing: border-box;
+    outline: none;
+    transition: 0.1s;
+    font-weight: 500;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+
+    &:focus,
+    &:active,
+    &:hover {
+        color: #fff;
+    }
+
+    &[disabled] {
+        cursor: not-allowed;
+        color: $colAuxiText !important;
+        background-color: $colBorder !important;
+        border-color: $colBorder !important;
+        box-shadow: none !important;
+    }
+}
+
+@mixin btnStatus($mainColor, $activeColor, $shadowArea: 0 0 10px, $color: #fff) {
+    color: $color;
+    background-color: $mainColor;
+    border: 1px solid $mainColor;
+
+    &:hover {
+        color: $color;
+        box-shadow: $shadowArea rgba($mainColor, 0.4);
+    }
+
+    &:focus,
+    &:active {
+        background-color: $activeColor;
+    }
+
+    &.plain {
+        color: $mainColor;
+        background-color: $color;
+
+        &:hover {
+            color: $color;
+            background-color: $mainColor;
+            border-color: $mainColor;
+        }
+    }
+
+    &.pure {
+        @extend .plain;
+        border-color: $color;
+        box-shadow: $shadowArea rgba($mainColor, 0.06);
+    }
+
+    &.polish {
+        color: $colAuxi;
+        border-color: $colAuxi;
+        background-color: #fff;
+
+        &:hover {
+            color: $color;
+            background-color: $mainColor;
+            border-color: $mainColor;
+        }
+    }
+}
+
+.btn-primary {
+    @include btnStatus($primary, #0d83ff);
+}
+
+.btn-red {
+    @include btnStatus($colError, #ff3030);
+}
+
+.btn-short {
+    min-width: 60px;
+}
+
+.btn-loog {
+    min-width: 290px;
+}

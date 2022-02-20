@@ -1,0 +1,45 @@
+//#主色
+$primary: #3195ff;
+
+//#辅助色
+$auxiGreen: #2bd8a2;
+$auxiYellow: #fece01;
+$auxiBule: #eaf4ff;
+
+//#通用颜色
+//##文字
+$colFirstText: #333333;
+$colSecondText: #666666;
+$colAuxiText: #999999;
+
+//##反馈
+$colSuccess: #3ac985;
+$colWarning: #ffa73d;
+$colError: #ff3030;
+
+//##通用
+$colBackground: #f3f6f9;
+$colAuxi: #cccccc;
+$colBorder: #e6e6e6;
+$colSplit: #f6f6f6;
+
+//#其他
+$radius: 8px;
+
+:export {
+    primary: $primary;
+    auxigreen: $auxiGreen;
+    auxiyellow: $auxiYellow;
+    auxibule: $auxiBule;
+    colfirsttext: $colFirstText;
+    colsecondtext: $colSecondText;
+    colsuccess: $colSuccess;
+    colwarning: $colWarning;
+    colerror: $colError;
+    colbackground: $colBackground;
+    colauxi: $colAuxi;
+    colborder: $colBorder;
+    colsplit: $colSplit;
+
+    radius: $radius;
+}
