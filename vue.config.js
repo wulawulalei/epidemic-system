@@ -23,11 +23,18 @@ module.exports = {
   devServer: {
     port: 8080,
     proxy: {
-      '/api': {
+      '/API': {
         target: 'http://localhost:8080',
         changeOrigin: true,
         pathRewrite: {
-          '/api': ''
+          '/API': ''
+        }
+      },
+      '/EPID': {
+        target: 'https://c.m.163.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '/EPID': ''
         }
       }
     }

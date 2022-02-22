@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: 'Button',
+  name: 'ep-button',
   props: {
     type: {
       type: String,
@@ -36,7 +36,7 @@ export default {
     polish: Boolean
   },
   methods: {
-    handleClick(evt) {
+    handleClick (evt) {
       this.$emit('click', evt)
     }
   }

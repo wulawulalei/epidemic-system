@@ -2,8 +2,8 @@
   <div id="user">
     <div class="scroll-top"></div>
     <ul class="nav">
-      <li v-for="(item,index) in nav" :key="index" @click="to(item.to)">
-        <div class="menu">{{item.title}}</div>
+      <li v-for="(item, index) in nav" :key="index" @click="to(item.to)">
+        <div class="menu" :class="$route.path==item.to?'select':''">{{ item.title }}</div>
         <i></i>
       </li>
     </ul>
@@ -14,22 +14,20 @@
 <script>
 export default {
   name: 'App',
-  data() {
+  data () {
     return {
       nav: [
         { title: '首页', to: '/dashboard' },
         { title: '外出申请', to: '/goout' },
         { title: '登记检测', to: '/register' },
-        { title: '个人中心', to: '/personal' },
+        { title: '个人中心', to: '/personal' }
       ]
     }
   },
   methods: {
-    to(path) {
-      if (path != this.$route.path) {
-        this.$router.push(
-          path
-        )
+    to (path) {
+      if (path !== this.$route.path) {
+        this.$router.push(path)
       }
     }
   }
@@ -41,8 +39,8 @@ export default {
     position: fixed;
     top: 0;
     height: 3px;
-    background: orange;
-    transiton-property: width, background;
+    background-color: orange;
+    transiton-property: width, backgroundColor;
     transition-duration: 1s, 1s;
     z-index: 99999;
   }
@@ -79,7 +77,7 @@ export default {
         background-color: #fe9600;
         transition: 1s;
       }
-      &:hover {
+      &:hover,.select {
         color: #fe9600;
         i {
           width: 100%;
@@ -96,13 +94,13 @@ export default {
     text-align: center;
   }
   &::before {
-    content: '';
+    content: "";
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: url('../../assets/user/dashboard.jpg') no-repeat;
+    background: url("../../assets/user/dashboard.png") no-repeat;
     background-size: cover;
     opacity: 0.05;
     z-index: -1;

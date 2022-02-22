@@ -29,7 +29,7 @@ export default {
     position: relative;
     width: 100%;
     height: 500px;
-    background: url('../../../../assets/user/dashboard.jpg') no-repeat;
+    background: url('../../../../assets/user/dashboard.png') no-repeat;
     background-size: cover;
     .info {
       position: absolute;

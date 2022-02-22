@@ -42,8 +42,9 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response) => {
     const res = response.data
-
-    if (res.code !== 200 && res.status !== 'ok') {
+    if (res.code === 10000) {
+      return res
+    } else if (res.code !== 10000 || (res.code !== 200 && res.status !== 'ok')) {
       // Message({
       //   message: res.message || 'Error',
       //   type: 'error',

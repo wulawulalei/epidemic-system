@@ -13,6 +13,11 @@ const routes = [
     meta: { title: 'Dashboard' }
   },
   {
+    path: '/users',
+    component: () => import('../views/users'),
+    meta: { title: 'users' }
+  },
+  {
     path: '/details',
     component: () => import('../views/details'),
     meta: { title: 'details' }
