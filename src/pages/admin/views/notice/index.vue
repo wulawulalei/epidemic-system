@@ -5,7 +5,7 @@
       <p>该页面为小区公告，管理员发布公告</p>
       <p>
         添加一个公告，
-        <span class="add">点击这里进行添加</span>
+        <span class="add" @click="toEdit">点击这里进行添加</span>
       </p>
     </div>
     <div class="header">
@@ -23,12 +23,12 @@
       <div class="search">
         <label>
           Search:
-          <input type="text" />
+          <input type="text" placeholder="输入您要搜索公告" v-model="search" @keyup.enter="init" />
         </label>
       </div>
     </div>
     <div class="contain">
-      <div class="item">
+      <div class="item" @click="toArticle(8)">
         <img src="../../../../assets/user/dashboard.png" alt />
         <p>hhhhhhhhhhhhhh</p>
         <div class="info">
@@ -44,10 +44,13 @@ import { Pagination } from 'element-ui'
 export default {
   name: 'notice',
   components: {
-    [Pagination.name]: Pagination,
+    [Pagination.name]: Pagination
   },
-  data() {
+  data () {
     return {
+      // 搜索的内容
+      search: '',
+      // 分页器
       pagiantion: {
         total: 0,
         page: 1,
@@ -56,8 +59,18 @@ export default {
     }
   },
   methods: {
-    handleCurrentChange() {
+    init () {},
+    handleCurrentChange () {
       console.log(1)
+    },
+    toEdit () {
+      this.$router.push('/editannount')
+    },
+    toArticle (id) {
+      this.$router.push({
+        path: `/article/${id}`,
+        id
+      })
     }
   }
 }

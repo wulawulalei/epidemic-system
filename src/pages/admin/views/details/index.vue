@@ -2,9 +2,9 @@
   <div id="detail" class="body-common">
     <div class="remind">
       <h4>住户核酸检测情况</h4>
-      <p>该数据表为小区住户核酸检测情况表，可自行添加核酸检测情况</p>
+      <p>该数据表为小区住户核酸检测结果表，可自行添加核酸检测结果</p>
       <p>
-        添加一个新的核酸检测情况，<span @click="showAdd = true" class="add"
+        添加一个新的核酸检测结果，<span @click="showAdd = true" class="add"
           >点击这里进行添加</span
         >
       </p>
@@ -24,7 +24,7 @@
       <div class="search">
         <label>
           Search:
-          <input type="text" />
+          <input type="text" placeholder="输入您要搜索的人员的核酸检测记录" v-model="search" @keyup.enter="init"/>
         </label>
       </div>
     </div>
@@ -41,48 +41,69 @@
       </el-table-column>
       <!-- 住址列 -->
       <el-table-column prop="address" label="住址">
-        <template slot-scope="scope">{{ scope.row.address || "-" }}</template>
+        <template slot-scope="scope">{{
+          scope.row.address == 0
+            ? "A区"
+            : scope.row.address == 1
+            ? "B区"
+            : scope.row.address == 2
+            ? "C区"
+            : scope.row.address == 3
+            ? "D区"
+            : "-" || "-"
+        }}</template>
       </el-table-column>
       <!-- 电话列 -->
       <el-table-column prop="sex" label="电话">
         <template slot-scope="scope">{{ scope.row.phone || "-" }}</template>
       </el-table-column>
       <!-- 时间列 -->
-      <el-table-column prop="sex" label="时间">
+      <el-table-column prop="sex" label="检测时间">
         <template slot-scope="scope">{{ scope.row.time || "-" }}</template>
       </el-table-column>
-      <!-- 第几针情况列 -->
-      <el-table-column prop="num" label="第几针">
+      <!-- 检测结果列 -->
+      <el-table-column prop="num" label="检测结果">
         <template slot-scope="scope">
-          <span :title="scope.row.result">{{ scope.row.num || "-" }}</span>
+          <span :title="scope.row.result">{{
+            scope.row.num == 0 ? "阴性" : "阳性" || "-"
+          }}</span>
         </template>
       </el-table-column>
     </el-table>
+    <Add :show.sync="showAdd" />
   </div>
 </template>
 <script>
+import Add from '../../components/add'
 import { Table, TableColumn, Pagination } from 'element-ui'
 export default {
   name: 'detail',
   components: {
+    Add,
     [Pagination.name]: Pagination,
     [Table.name]: Table,
     [TableColumn.name]: TableColumn
   },
   data () {
     return {
+      // 加载中时显示loading
       loading: true,
+      // 是否展示添加弹框
       showAdd: false,
+      // 搜索的内容
+      search: '',
+      // 展示的列表
       list: [
         {
           name: 'hhh',
           phone: '4564564',
-          address: 'hhhhhhhh',
+          address: '0',
           time: '2022-2-21',
           num: 1,
           id: 1
         }
       ],
+      // 分页器
       pagiantion: {
         total: 0,
         page: 1,
@@ -91,6 +112,7 @@ export default {
     }
   },
   methods: {
+    init () {},
     handleCurrentChange () {
       console.log(1)
     }

@@ -3,12 +3,14 @@
     <div class="scroll-top"></div>
     <ul class="nav">
       <li v-for="(item, index) in nav" :key="index" @click="to(item.to)">
-        <div class="menu" :class="$route.path==item.to?'select':''">{{ item.title }}</div>
+        <div class="menu" :class="$route.path == item.to ? 'select' : ''">
+          {{ item.title }}
+        </div>
         <i></i>
       </li>
     </ul>
     <router-view></router-view>
-    <div class="footer">Copyright © 2022 哈哈哈</div>
+    <div class="footer">Copyright © 2022 XZY</div>
   </div>
 </template>
 <script>
@@ -77,7 +79,8 @@ export default {
         background-color: #fe9600;
         transition: 1s;
       }
-      &:hover,.select {
+      &:hover,
+      .select {
         color: #fe9600;
         i {
           width: 100%;
@@ -99,7 +102,7 @@ export default {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background: url("../../assets/user/dashboard.png") no-repeat;
     background-size: cover;
     opacity: 0.05;
@@ -116,5 +119,53 @@ export default {
 ::-webkit-scrollbar-thumb {
   border-radius: 1px;
   background: linear-gradient(90deg, #82e0f7 0%, #009ddc 52%);
+}
+#user {
+  .el-pagination {
+    .el-pager {
+      .number {
+        color: $colAuxiText;
+        border-radius: $radius;
+      }
+    }
+    .btn-prev,
+    .btn-next,
+    .btn-quicknext {
+      border-radius: $radius !important;
+      background-color: transparent;
+    }
+    .el-pagination__jump {
+      margin-left: 0;
+      font-size: 14px;
+      color: $colAuxiText;
+      input {
+        color: $primary;
+      }
+    }
+  }
+  .el-table {
+    th {
+      border-top: 1px solid #e3eaef;
+      border-bottom: 2px solid #e3eaef;
+      .cell {
+        font-size: 16px;
+        font-weight: normal;
+        color: #333333;
+      }
+    }
+    .caret-wrapper {
+      width: 10px;
+    }
+    .el-table__body .cell {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .el-table__row > td {
+      padding: 0;
+      height: 60px;
+      line-height: 60px;
+    }
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div id="users" class="body-common">
+  <div id="users" class="body-common">
     <div class="remind">
       <h4>账号管理</h4>
       <p>该数据表为账号信息，包含各类用户账号信息</p>
@@ -24,7 +24,7 @@
       <div class="search">
         <label>
           Search:
-          <input type="text" />
+          <input type="text" v-model="search" placeholder="输入您要搜索的人员" @keyup.enter="init"/>
         </label>
       </div>
     </div>
@@ -41,48 +41,99 @@
       </el-table-column>
       <!-- 住址列 -->
       <el-table-column prop="address" label="住址">
-        <template slot-scope="scope">{{ scope.row.address || "-" }}</template>
+        <template slot-scope="scope">{{
+          scope.row.address == 0
+            ? "A区"
+            : scope.row.address == 1
+            ? "B区"
+            : scope.row.address == 2
+            ? "C区"
+            : scope.row.address == 3
+            ? "D区"
+            : "-" || "-"
+        }}</template>
       </el-table-column>
       <!-- 电话列 -->
-      <el-table-column prop="sex" label="电话">
+      <el-table-column prop="phone" label="电话">
         <template slot-scope="scope">{{ scope.row.phone || "-" }}</template>
       </el-table-column>
       <!-- 权限列 -->
-      <el-table-column prop="sex" label="权限">
-        <template slot-scope="scope">{{ scope.row.power || "-" }}</template>
+      <el-table-column prop="authority" label="权限">
+        <template slot-scope="scope">{{
+          scope.row.authority == 0 ? "普通用户" : "管理员" || "-"
+        }}</template>
+      </el-table-column>
+      <!-- 管理的小区号列 -->
+      <el-table-column prop="village" label="管理区">
+        <template slot-scope="scope">{{
+          scope.row.village == 0
+            ? "A区"
+            : scope.row.village == 1
+            ? "B区"
+            : scope.row.village == 2
+            ? "C区"
+            : scope.row.village == 3
+            ? "D区"
+            : "-" || "-"
+        }}</template>
       </el-table-column>
       <!-- 操作列 -->
       <el-table-column prop="control" label="操作">
         <template slot-scope="scope">
-          <img src="" :alt="scope.row.id" />
-          <img src="" alt=""/>
+          <i
+            class="iconfont icon-xiugai"
+            title="修改"
+            @click="updateMessage(scope.row)"
+          ></i>
+          <i
+            class="iconfont icon-shanchu"
+            title="删除"
+            @click="deleteUser(scope.row)"
+          ></i>
         </template>
       </el-table-column>
     </el-table>
-    </div>
+    <Add :show.sync="showAdd" :user="user" />
+    <Delete :show.sync="showDelete" :user="user" />
+  </div>
 </template>
 <script>
+import Add from '../../components/add'
+import Delete from '../../components/delete'
 import { Table, TableColumn, Pagination } from 'element-ui'
 export default {
   name: 'users',
   components: {
+    Add,
+    Delete,
     [Pagination.name]: Pagination,
     [Table.name]: Table,
     [TableColumn.name]: TableColumn
   },
   data () {
     return {
+      // 加载中时显示loading
       loading: true,
+      // 是否展示添加弹框
       showAdd: false,
+      // 是否展示删除弹框
+      showDelete: false,
+      // 修改用户信息时传给组件的信息
+      user: {},
+      // 搜索的内容
+      search: '',
+      // 展示的列表
       list: [
         {
           name: 'hhh',
+          address: 0,
           phone: '4564564',
-          address: 'hhhhhhhh',
-          power: '管理员',
+          village: 0,
+          authority: 1,
           id: 1
         }
       ],
+      // 分页器
       pagiantion: {
         total: 0,
         page: 1,
@@ -90,9 +141,30 @@ export default {
       }
     }
   },
+  watch: {
+    showAdd (val) {
+      if (!val) {
+        this.user = {}
+      }
+    },
+    showDelete (val) {
+      if (!val) {
+        this.user = {}
+      }
+    }
+  },
   methods: {
+    init () {},
     handleCurrentChange () {
       console.log(1)
+    },
+    updateMessage (obj) {
+      this.user = obj
+      this.showAdd = true
+    },
+    deleteUser (obj) {
+      this.user = obj
+      this.showDelete = true
     }
   }
 }
@@ -127,6 +199,14 @@ export default {
       border: 1px solid #ccc;
       border-radius: 4px;
       outline: none;
+    }
+  }
+  i {
+    margin-right: 10px;
+    font-size: 20px;
+    vertical-align: middle;
+    &:nth-of-type(2) {
+      font-size: 23px;
     }
   }
 }

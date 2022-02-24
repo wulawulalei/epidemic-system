@@ -4,9 +4,11 @@
       <div class="details">
         <div class="item" v-for="(item, index) in epidList" :key="index">
           <h4>{{ item.title }}</h4>
-          <div class="number" :style="{color:item.color}">{{ item.num }}</div>
+          <div class="number" :style="{ color: item.color }">
+            {{ item.num }}
+          </div>
           <p class="added">
-            较昨日<span :style="{color:item.color}">{{
+            较昨日<span :style="{ color: item.color }">{{
               item.added > 0 ? "+" + item.added : item.added
             }}</span>
           </p>
@@ -18,21 +20,21 @@
       <div class="banner_wave_2"></div>
     </div>
     <div class="main">
-      <div class="item" @click="toArticle(1)">
-        <div class="time"><i></i>发布于2021-12-1</div>
+      <div class="item" v-for="item in list" :key="item.id" @click="toArticle(item.id)">
+        <div class="time">
+          <i class="iconfont icon-shijian"></i>发布于{{item.time}}
+        </div>
         <div class="title">
-          <i></i>
-          <span>Web前端面试题：写一个mul函数</span>
+          <i class="iconfont icon-timu-04"></i>
+          <span>{{item.title}}</span>
         </div>
         <div class="meta">
-          作者：
-          <span class="author">的风格</span>
+          <i class="iconfont icon-zhanghao"></i>
+          作者:
+          <span class="author">{{item.author}}</span>
         </div>
         <div class="content">
-          摘要：问题：写一个mul函数调用时将生成以下输出:
-          console.log(mul(2)(3)(4)); // output : 24 console.log(mul(4)(3)(4));
-          // output : 48 回答：时允
-          这个应该是题主想要的答案，支持任意次数调用。主要是考察了对递归的理解，和
+          {{item.content}}
         </div>
       </div>
     </div>
@@ -81,7 +83,15 @@ export default {
           added: 0,
           color: '#34aa70'
         }
-      ]
+      ],
+      // 文章列表
+      list: [{
+        id: 1,
+        time: '2021-12-1',
+        title: 'Web前端面试题：写一个mul函数',
+        author: 'hhh',
+        content: '摘要：问题：写一个mul函数调用时将生成以下输出:console.log(mul(2)(3)(4)); // output : 24 console.log(mul(4)(3)(4));// output : 48 回答：时允这个应该是题主想要的答案，支持任意次数调用。主要是考察了对递归的理解，和'
+      }]
     }
   },
   mounted () {
@@ -166,7 +176,7 @@ export default {
       transform: translate(-50%, -50%);
       width: 688px;
       padding-top: 34px;
-      background-color: rgba(255,255,255,.4);
+      background-color: rgba(255, 255, 255, 0.4);
       box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
       border-radius: 16px;
       .item {
@@ -265,6 +275,10 @@ export default {
       background-color: rgba(255, 255, 255, 0);
       box-shadow: 0 1px 20px -6px rgba(0, 0, 0, 0.5);
       transition: box-shadow 0.3s;
+      i {
+        margin-right: 10px;
+        vertical-align: middle;
+      }
       .time {
         color: #888;
         font-size: 12px;
@@ -278,12 +292,13 @@ export default {
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
-        span {
+        span,
+        i {
           cursor: pointer;
           transition: color 0.5s;
-          &:hover {
-            color: #ccc;
-          }
+        }
+        &:hover {
+          color: #ccc;
         }
       }
       .content {

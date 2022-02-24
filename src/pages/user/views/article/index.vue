@@ -2,24 +2,38 @@
   <div id="article">
     <div class="banner">
       <div class="info">
-        <div class="title">Web前端面试题：写一个mul函数</div>
+        <div class="title">{{article.title}}</div>
         <div class="article-info">
           <img class="avatar" />
-          <span class="author">Toretto</span>
+          <span class="author">{{article.author}}</span>
           ·
-          <span class="article-time">2021-12-01 14:22</span>
+          <span class="article-time">{{article.time}}</span>
           ·
-          <span class="read-num">33</span>
+          <span class="read-num">{{article.read}}</span>
           次阅读
         </div>
       </div>
     </div>
-    <div class="content">水水水水水水水水水水水水水水水水水水水</div>
+    <div class="content">
+      <p>水水水水水水水水水水水水水水水水士大夫精神的好伐拉会尽快答复接口连接啊考虑实际的风口浪尖撒飞机开绿灯撒加分类水水水</p>
+    </div>
   </div>
 </template>
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  data () {
+    return {
+      article: {
+        title: 'Web前端面试题：写一个mul函数',
+        avatar: '',
+        author: 'Toretto',
+        time: '2021-12-01 14:22',
+        read: '33',
+        content: ''
+      }
+    }
+  }
 }
 </script>
 <style lang='scss' scoped>
@@ -64,6 +78,14 @@ export default {
     max-width: 1000px;
     margin: 0 auto;
     padding: 66px 15px 10px;
+    p{
+      width: 100%;
+      line-height: 30px;
+      margin: 20px 0;
+      font-size: 18px;
+      text-indent: 2em;
+      word-break: break-all;
+    }
   }
 }
 </style>

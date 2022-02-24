@@ -1,17 +1,24 @@
 <template>
   <div id="login">
     <div class="main">
-      <h2>{{register?'注册':'登陆'}}</h2>
+      <h2>{{ register ? "注册" : "登陆" }}</h2>
       <div class="login_box">
         <input type="text" required="required" id="account" v-model="account" />
         <label for="account">用户名</label>
       </div>
       <div class="login_box">
-        <input type="password" required="required" id="password" v-model="password" />
+        <input
+          type="password"
+          required="required"
+          id="password"
+          v-model="password"
+        />
         <label for="password">密码</label>
       </div>
       <div class="register">
-        <div class="reg-btn" @click="register=!register">{{register?'已有账号，点此登陆':'没有账号，点此注册'}}</div>
+        <div class="reg-btn" @click="register = !register">
+          {{ register ? "已有账号，点此登陆" : "没有账号，点此注册" }}
+        </div>
       </div>
       <button type="submit" class="btn" @click="login" :disabled="!disabled">
         登陆
@@ -27,7 +34,7 @@
 import { loginSystem } from '@/api/question'
 export default {
   name: 'App',
-  data() {
+  data () {
     return {
       account: '',
       password: '',
@@ -35,18 +42,18 @@ export default {
     }
   },
   computed: {
-    disabled() {
+    disabled () {
       return this.account.length > 0 && this.password.length > 0
     }
   },
   methods: {
-    login() {
+    login () {
       if (this.account && this.password) {
         loginSystem({
           accuout: this.account,
           password: this.password,
           register: this.register ? '1' : '0'
-        }).then(res => {
+        }).then((res) => {
           if (res.status == 'ok') {
             if (res.identity == 'user') {
               window.location.pathname = '/user.html'
@@ -68,12 +75,13 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(#141e30, #243b55);
+  background: url("../../assets/login/dashboard.jpg");
+  background-size: cover;
 }
 .main {
   width: 400px;
   text-align: center;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.4);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
   padding: 40px;
   h2 {

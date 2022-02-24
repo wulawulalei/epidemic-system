@@ -11,8 +11,7 @@
             @click="changeroute(item.path)"
             :class="key == item.path ? 'select' : ''"
           >
-            <!--  -->
-            <div class="icon"></div>
+            <i class="iconfont" :class="item.icon"></i>
             <div class="name">{{ item.name }}</div>
           </div>
         </div>
@@ -21,7 +20,10 @@
         <div class="header">
           <div class="greet">{{ greeting }}，欢迎来到疫情防控管理系统</div>
           <div class="user">
-            <img src alt="头像" />
+            <img
+              :src="src ? src : require('@/assets/common/default-avatar.png')"
+              alt="头像"
+            />
             <span class="name">张三</span>
           </div>
         </div>
@@ -40,40 +42,41 @@ export default {
       nav: [
         {
           name: '主页',
-          icon: '',
+          icon: 'icon-zhuye',
           path: '/dashboard'
         },
         {
           name: '账号管理',
-          icon: '',
+          icon: 'icon-xitongguanli-zhanghaoguanli',
           path: '/users'
         },
         {
           name: '核酸检测详情',
-          icon: '',
+          icon: 'icon-hesuanjiance',
           path: '/details'
         },
         {
           name: '外出管理',
-          icon: '',
+          icon: 'icon-waichushenqing',
           path: '/outofmanager'
         },
         {
           name: '疫情公告',
-          icon: '',
+          icon: 'icon-gonggao',
           path: '/notice'
         },
         {
           name: '编辑公告',
-          icon: '',
+          icon: 'icon-bianji',
           path: '/editannount'
         },
         {
           name: '个人中心',
-          icon: '',
+          icon: 'icon-zhanghao',
           path: '/personal'
         }
-      ]
+      ],
+      src: ''
     }
   },
   computed: {
@@ -139,7 +142,7 @@ export default {
   }
   .nav {
     width: 250px;
-    height: 100%;
+    height: 100vh;
     margin-right: 30px;
     font-size: 14px;
     background: linear-gradient(135deg, #8f75da 0, #727cf5 60%);
@@ -159,6 +162,14 @@ export default {
       color: #cedce4;
       cursor: pointer;
       transition: all 0.3s;
+      i {
+        margin-right: 10px;
+        vertical-align: middle;
+      }
+      .name {
+        display: inline-block;
+        vertical-align: middle;
+      }
     }
     .nav-item.select {
       padding-left: 40px;
@@ -185,10 +196,14 @@ export default {
         img {
           width: 30px;
           height: 30px;
+          margin-right: 10px;
+          border: 1px solid #ccc;
           border-radius: 50%;
+          vertical-align: middle;
         }
         .name {
           margin-right: 10px;
+          vertical-align: middle;
         }
         &:hover {
           color: $primary;
@@ -224,8 +239,8 @@ export default {
   }
   .el-table {
     th {
-            border-top: 1px solid  #e3eaef;
-      border-bottom: 2px solid  #e3eaef;
+      border-top: 1px solid #e3eaef;
+      border-bottom: 2px solid #e3eaef;
       .cell {
         font-size: 16px;
         font-weight: normal;
@@ -245,6 +260,15 @@ export default {
       height: 60px;
       line-height: 60px;
     }
+  }
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background-color: #eee;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 1px;
+    background: linear-gradient(135deg, #8f75da 0, #727cf5 60%);
   }
 }
 </style>

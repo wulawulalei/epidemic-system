@@ -30,7 +30,7 @@ const routes = [
   {
     path: '/notice',
     component: () => import('../views/notice'),
-    meta: { title: '公告' }
+    meta: { title: '公告列表' }
   },
   {
     path: '/editannount',
@@ -41,6 +41,11 @@ const routes = [
     path: '/personal',
     component: () => import('../views/personal'),
     meta: { title: '个人中心' }
+  },
+  {
+    path: '/article/:id',
+    component: () => import('../views/article'),
+    meta: { title: '公告信息' }
   }
 ]
 
