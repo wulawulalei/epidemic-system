@@ -41,7 +41,7 @@
   </div>
 </template>
 <script>
-import { epidemic } from '@/api/question'
+import { epidemic } from '@/api/user'
 export default {
   name: 'App',
   data () {

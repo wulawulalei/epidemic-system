@@ -1,9 +1,9 @@
 import axios from 'axios'
 import qs from 'qs'
 // import store from '@/store'
-// import {
-//   Message
-// } from 'element-ui'
+import {
+  Message
+} from 'element-ui'
 
 // create an axios instance
 const service = axios.create({
@@ -17,18 +17,20 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   (config) => {
-    config.params = {
-      ...config.params
-    }
-
-    if (config.method === 'post') {
+    if (config.url !== '/login') {
+      if (config.method === 'post') {
+        config.data = qs.stringify({
+          ...config.data
+        })
+      } else if (config.method === 'get') {
+        config.params = {
+          ...config.params
+        }
+      }
+    } else {
       config.data = qs.stringify({
         ...config.data
       })
-    } else if (config.method === 'get') {
-      config.params = {
-        ...config.params
-      }
     }
     return config
   },
@@ -39,20 +41,19 @@ service.interceptors.request.use(
 )
 
 // response interceptor
+// 请求后如果返回token过期的话则跳转到登录页面
 service.interceptors.response.use(
   (response) => {
     const res = response.data
-    if (res.code === 10000) {
+    if (res.code === 10000 || res.code === 200) {
       return res
-    } else if (res.code !== 10000 || (res.code !== 200 && res.status !== 'ok')) {
-      // Message({
-      //   message: res.message || 'Error',
-      //   type: 'error',
-      //   duration: 5 * 1000
-      // })
-      return Promise.reject(new Error(res.message || 'Error'))
     } else {
-      return res
+      Message({
+        message: res.message || 'Error',
+        type: 'error',
+        duration: 5 * 1000
+      })
+      return Promise.reject(new Error(res.message || 'Error'))
     }
   },
   (error) => {

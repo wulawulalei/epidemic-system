@@ -20,7 +20,7 @@
 </template>
 <script>
 import Echarts from 'echarts'
-import { epidemic } from '@/api/question'
+import { epidemic } from '@/api/admin'
 import { Calendar } from 'element-ui'
 export default {
   name: 'dashboard',

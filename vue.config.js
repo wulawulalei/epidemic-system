@@ -80,12 +80,6 @@ module.exports = {
       .test(/\.(jpg|png|gif)$/)
       .use('url-loader')
       .loader('url-loader')
-      .tap((options) =>
-        merge(options, {
-          publicPath:
-            process.env.NODE_ENV === 'production' ? '/templates/pages/' : '/'
-        })
-      )
       .end()
   }
 }

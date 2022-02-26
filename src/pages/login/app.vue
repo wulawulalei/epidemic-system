@@ -31,7 +31,7 @@
   </div>
 </template>
 <script>
-import { loginSystem } from '@/api/question'
+import { loginSystem } from '@/api/login'
 export default {
   name: 'App',
   data () {
@@ -52,16 +52,12 @@ export default {
         loginSystem({
           accuout: this.account,
           password: this.password,
-          register: this.register ? '1' : '0'
+          register: this.register ? 1 : 0
         }).then((res) => {
-          if (res.status == 'ok') {
-            if (res.identity == 'user') {
-              window.location.pathname = '/user.html'
-            } else if (res.identity == 'admin') {
-              window.location.pathname = '/admin.html'
-            }
-          } else {
-            this.$toast(res.message)
+          if (res.identity === 0) {
+            window.location.pathname = '/user.html'
+          } else if (res.identity === 1) {
+            window.location.pathname = '/admin.html'
           }
         })
       }
