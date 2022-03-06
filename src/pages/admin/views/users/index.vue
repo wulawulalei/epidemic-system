@@ -4,19 +4,18 @@
       <h4>账号管理</h4>
       <p>该数据表为账号信息，包含各类用户账号信息</p>
       <p>
-        若有未录入账号，<span @click="showAdd = true" class="add"
-          >点击这里进行添加</span
-        >
+        若有未录入账号，
+        <span @click="showAdd = true" class="add">点击这里进行添加</span>
       </p>
     </div>
     <div class="header">
       <div class="pagination">
         <el-pagination
-          :total="pagiantion.total"
-          :page-size="pagiantion.limit"
+          :total="pagination.total"
+          :page-size="pagination.limit"
           :page-sizes="[2, 4, 6]"
           @current-change="handleCurrentChange"
-          :current-page.sync="pagiantion.page"
+          :current-page.sync="pagination.page"
           :pager-count="5"
           layout="prev, pager, next,jumper"
         ></el-pagination>
@@ -24,7 +23,12 @@
       <div class="search">
         <label>
           Search:
-          <input type="text" v-model="search" placeholder="输入您要搜索的人员" @keyup.enter="init"/>
+          <input
+            type="text"
+            v-model="search"
+            placeholder="输入您要搜索的人员"
+            @keyup.enter="searchUser"
+          />
         </label>
       </div>
     </div>
@@ -41,17 +45,19 @@
       </el-table-column>
       <!-- 住址列 -->
       <el-table-column prop="address" label="住址">
-        <template slot-scope="scope">{{
+        <template slot-scope="scope">
+          {{
           scope.row.address == 0
-            ? "A区"
-            : scope.row.address == 1
-            ? "B区"
-            : scope.row.address == 2
-            ? "C区"
-            : scope.row.address == 3
-            ? "D区"
-            : "-" || "-"
-        }}</template>
+          ? "A区"
+          : scope.row.address == 1
+          ? "B区"
+          : scope.row.address == 2
+          ? "C区"
+          : scope.row.address == 3
+          ? "D区"
+          : "-" || "-"
+          }}
+        </template>
       </el-table-column>
       <!-- 电话列 -->
       <el-table-column prop="phone" label="电话">
@@ -59,48 +65,45 @@
       </el-table-column>
       <!-- 权限列 -->
       <el-table-column prop="authority" label="权限">
-        <template slot-scope="scope">{{
+        <template slot-scope="scope">
+          {{
           scope.row.authority == 0 ? "普通用户" : "管理员" || "-"
-        }}</template>
+          }}
+        </template>
       </el-table-column>
       <!-- 管理的小区号列 -->
       <el-table-column prop="village" label="管理区">
-        <template slot-scope="scope">{{
+        <template slot-scope="scope">
+          {{
           scope.row.village == 0
-            ? "A区"
-            : scope.row.village == 1
-            ? "B区"
-            : scope.row.village == 2
-            ? "C区"
-            : scope.row.village == 3
-            ? "D区"
-            : "-" || "-"
-        }}</template>
+          ? "A区"
+          : scope.row.village == 1
+          ? "B区"
+          : scope.row.village == 2
+          ? "C区"
+          : scope.row.village == 3
+          ? "D区"
+          : "-" || "-"
+          }}
+        </template>
       </el-table-column>
       <!-- 操作列 -->
       <el-table-column prop="control" label="操作">
         <template slot-scope="scope">
-          <i
-            class="iconfont icon-xiugai"
-            title="修改"
-            @click="updateMessage(scope.row)"
-          ></i>
-          <i
-            class="iconfont icon-shanchu"
-            title="删除"
-            @click="deleteUser(scope.row)"
-          ></i>
+          <i class="iconfont icon-xiugai" title="修改" @click="updateMessage(scope.row)"></i>
+          <i class="iconfont icon-shanchu" title="删除" @click="deleteUser(scope.row)"></i>
         </template>
       </el-table-column>
     </el-table>
-    <Add :show.sync="showAdd" :user="user" />
-    <Delete :show.sync="showDelete" :user="user" />
+    <Add :show.sync="showAdd" :user="user" @init="init" />
+    <Delete :show.sync="showDelete" :user="user" @init="init" />
   </div>
 </template>
 <script>
 import Add from '../../components/add'
 import Delete from '../../components/delete'
 import { Table, TableColumn, Pagination } from 'element-ui'
+import { getuser } from '@/api/admin'
 export default {
   name: 'users',
   components: {
@@ -110,7 +113,7 @@ export default {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn
   },
-  data () {
+  data() {
     return {
       // 加载中时显示loading
       loading: true,
@@ -120,21 +123,13 @@ export default {
       showDelete: false,
       // 修改用户信息时传给组件的信息
       user: {},
-      // 搜索的内容
+      // 搜索框的内容
       search: '',
+      searchTest: '',
       // 展示的列表
-      list: [
-        {
-          name: 'hhh',
-          address: 0,
-          phone: '4564564',
-          village: 0,
-          authority: 1,
-          id: 1
-        }
-      ],
+      list: [],
       // 分页器
-      pagiantion: {
+      pagination: {
         total: 0,
         page: 1,
         limit: 10
@@ -142,27 +137,52 @@ export default {
     }
   },
   watch: {
-    showAdd (val) {
+    showAdd(val) {
       if (!val) {
         this.user = {}
       }
     },
-    showDelete (val) {
+    showDelete(val) {
       if (!val) {
         this.user = {}
       }
     }
   },
+  mounted() {
+    this.init()
+  },
   methods: {
-    init () {},
-    handleCurrentChange () {
-      console.log(1)
+    init() {
+      let send = {
+        page: this.pagination.page,
+        limit: this.pagination.limit
+      }
+      this.searchTest && (send.search = this.searchTest)
+      this.loading = true
+      getuser(send).then(res => {
+        this.list = res.data.list
+        this.total = res.data.total
+        this.loading = false
+      }, () => {
+        this.loading = false
+      })
     },
-    updateMessage (obj) {
+    //搜索用户
+    searchUser() {
+      this.pagination.page = 1
+      this.total = 0
+      this.searchTest = this.search
+      this.init()
+    },
+    handleCurrentChange() {
+      this.list = []
+      this.init()
+    },
+    updateMessage(obj) {
       this.user = obj
       this.showAdd = true
     },
-    deleteUser (obj) {
+    deleteUser(obj) {
       this.user = obj
       this.showDelete = true
     }

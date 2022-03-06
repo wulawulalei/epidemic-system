@@ -3,9 +3,7 @@
     <div class="scroll-top"></div>
     <ul class="nav">
       <li v-for="(item, index) in nav" :key="index" @click="to(item.to)">
-        <div class="menu" :class="$route.path == item.to ? 'select' : ''">
-          {{ item.title }}
-        </div>
+        <div class="menu" :class="$route.path == item.to ? 'select' : ''">{{ item.title }}</div>
         <i></i>
       </li>
     </ul>
@@ -14,9 +12,10 @@
   </div>
 </template>
 <script>
+import { intercept } from '@/mixins/intercept.js'
 export default {
   name: 'App',
-  data () {
+  data() {
     return {
       nav: [
         { title: '首页', to: '/dashboard' },
@@ -27,12 +26,13 @@ export default {
     }
   },
   methods: {
-    to (path) {
+    to(path) {
       if (path !== this.$route.path) {
         this.$router.push(path)
       }
     }
-  }
+  },
+  mixins: [intercept]
 }
 </script>
 <style lang='scss' scoped>
@@ -97,13 +97,13 @@ export default {
     text-align: center;
   }
   &::before {
-    content: "";
+    content: '';
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
-    background: url("../../assets/user/dashboard.png") no-repeat;
+    background: url('../../assets/user/dashboard.png') no-repeat;
     background-size: cover;
     opacity: 0.05;
     z-index: -1;

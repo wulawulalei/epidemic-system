@@ -4,13 +4,14 @@
       <div class="details">
         <div class="item" v-for="(item, index) in epidList" :key="index">
           <h4>{{ item.title }}</h4>
-          <div class="number" :style="{ color: item.color }">
-            {{ item.num }}
-          </div>
+          <div class="number" :style="{ color: item.color }">{{ item.num }}</div>
           <p class="added">
-            较昨日<span :style="{ color: item.color }">{{
+            较昨日
+            <span :style="{ color: item.color }">
+              {{
               item.added > 0 ? "+" + item.added : item.added
-            }}</span>
+              }}
+            </span>
           </p>
         </div>
       </div>
@@ -20,9 +21,10 @@
       <div class="banner_wave_2"></div>
     </div>
     <div class="main">
-      <div class="item" v-for="item in list" :key="item.id" @click="toArticle(item.id)">
+      <div class="item" v-for="item in list" :key="item.id" @click="toArticle(item._id)">
         <div class="time">
-          <i class="iconfont icon-shijian"></i>发布于{{item.time}}
+          <i class="iconfont icon-shijian"></i>
+          发布于{{item.publishdate}}
         </div>
         <div class="title">
           <i class="iconfont icon-timu-04"></i>
@@ -33,18 +35,31 @@
           作者:
           <span class="author">{{item.author}}</span>
         </div>
-        <div class="content">
-          {{item.content}}
-        </div>
+        <div class="content">{{item.content}}</div>
+      </div>
+      <div class="pagination">
+        <el-pagination
+          :total="pagination.total"
+          :page-size="pagination.limit"
+          :page-sizes="[2, 4, 6]"
+          @current-change="handleCurrentChange"
+          :current-page.sync="pagination.page"
+          :pager-count="5"
+          layout="prev, pager, next,jumper"
+        ></el-pagination>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { epidemic } from '@/api/user'
+import { epidemic, getarticle } from '@/api/user'
+import { Pagination } from 'element-ui'
 export default {
   name: 'App',
-  data () {
+  components: {
+    [Pagination.name]: Pagination,
+  },
+  data() {
     return {
       epidList: [
         {
@@ -85,25 +100,26 @@ export default {
         }
       ],
       // 文章列表
-      list: [{
-        id: 1,
-        time: '2021-12-1',
-        title: 'Web前端面试题：写一个mul函数',
-        author: 'hhh',
-        content: '摘要：问题：写一个mul函数调用时将生成以下输出:console.log(mul(2)(3)(4)); // output : 24 console.log(mul(4)(3)(4));// output : 48 回答：时允这个应该是题主想要的答案，支持任意次数调用。主要是考察了对递归的理解，和'
-      }]
+      list: [],
+      // 分页器
+      pagination: {
+        total: 0,
+        page: 1,
+        limit: 10
+      }
     }
   },
-  mounted () {
+  mounted() {
     this.init()
   },
   methods: {
     // 初始化
-    init () {
+    init() {
       this.getEpidMessage()
+      this.getArtilceList()
     },
     // 获取疫情信息
-    getEpidMessage () {
+    getEpidMessage() {
       epidemic().then((res) => {
         const input = res.data.chinaTotal.total.input
         const noSymptom = res.data.chinaTotal.extData.noSymptom
@@ -149,13 +165,40 @@ export default {
         })
       })
     },
+    //获取公告列表
+    getArtilceList() {
+      const send = {
+        page: this.pagination.page,
+        limit: this.pagination.limit
+      }
+      getarticle(send).then(res => {
+        this.list = res.data.list.map(item => {
+          item.publishdate = this.dateformat(item.publishdate)
+          return item
+        })
+        this.pagination.total = res.data.total
+      })
+    },
     // 跳转到文章页面
-    toArticle (params) {
+    toArticle(params) {
       this.$router.push({
         path: `/article/${params}`,
         params
       })
-    }
+    },
+    handleCurrentChange() {
+      this.list = []
+      this.init()
+    },
+    dateformat(time) {
+      const date = new Date(time)
+      const year = date.getFullYear()
+      let month = date.getMonth() + 1
+      month = month > 9 ? month : '0' + month
+      let day = date.getDate()
+      day = day > 9 ? day : '0' + day
+      return `${year}-${month}-${day}`
+    },
   }
 }
 </script>
@@ -165,7 +208,7 @@ export default {
     position: relative;
     width: 100%;
     height: 100vh;
-    background: url("../../../../assets/user/dashboard.png") no-repeat;
+    background: url('../../../../assets/user/dashboard.png') no-repeat;
     background-size: cover;
     .details {
       display: flex;
@@ -197,7 +240,7 @@ export default {
           color: #999;
         }
         &:not(:nth-of-type(3n))::before {
-          content: "";
+          content: '';
           position: absolute;
           right: 0;
           top: 46px;
@@ -208,13 +251,13 @@ export default {
       }
     }
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100vh;
-      background: url("../../../../assets/user/cover.png");
+      background: url('../../../../assets/user/cover.png');
     }
   }
   .wave {
@@ -229,7 +272,7 @@ export default {
       width: 200%;
       height: 100%;
       left: 0;
-      background: url("../../../../assets/user/wave1.png") bottom repeat-x;
+      background: url('../../../../assets/user/wave1.png') bottom repeat-x;
       animation: water-left 30s infinite;
     }
     .banner_wave_2 {
@@ -237,7 +280,7 @@ export default {
       width: 200%;
       height: 100%;
       left: -100%;
-      background: url("../../../../assets/user/wave2.png") bottom repeat-x;
+      background: url('../../../../assets/user/wave2.png') bottom repeat-x;
       animation: water-right 20s infinite;
     }
     @keyframes water-left {
@@ -308,6 +351,9 @@ export default {
       &:hover {
         box-shadow: 0 5px 10px 5px rgba(110, 110, 110, 0.4);
       }
+    }
+    .pagination {
+      margin: 20px 0;
     }
   }
 }

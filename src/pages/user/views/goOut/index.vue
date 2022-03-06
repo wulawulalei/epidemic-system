@@ -4,23 +4,23 @@
       <h4>外出申请</h4>
       <p>该数据表为住户本人的申请外出表，可自行添加外出申请</p>
       <p>
-        添加一个新的外出请求，<span @click="showAdd = true" class="add"
-          >点击这里进行添加</span
-        >
+        添加一个新的外出请求，
+        <span @click="showAdd = true" class="add">点击这里进行添加</span>
       </p>
     </div>
     <div class="header">
       <div class="pagination">
         <el-pagination
-          :total="pagiantion.total"
-          :page-size="pagiantion.limit"
+          :total="pagination.total"
+          :page-size="pagination.limit"
           :page-sizes="[2, 4, 6]"
           @current-change="handleCurrentChange"
-          :current-page.sync="pagiantion.page"
+          :current-page.sync="pagination.page"
           :pager-count="5"
           layout="prev, pager, next,jumper"
         ></el-pagination>
       </div>
+      <div class="all-num">共{{pagination.total||0}}条</div>
     </div>
     <el-table
       :data="list"
@@ -35,14 +35,16 @@
       </el-table-column>
       <!-- 住址列 -->
       <el-table-column prop="address" label="住址">
-        <template slot-scope="scope">{{ scope.row.address || "-" }}</template>
+        <template
+          slot-scope="scope"
+        >{{ scope.row.address==0?'A区':scope.row.address==1?'B区':scope.row.address==2?'C区':scope.row.address==3?'D区':'-' || "-" }}</template>
       </el-table-column>
       <!-- 电话列 -->
       <el-table-column prop="sex" label="电话">
         <template slot-scope="scope">{{ scope.row.phone || "-" }}</template>
       </el-table-column>
       <!-- 外出原因列 -->
-      <el-table-column prop="result" label="外出原因" min-width="300">
+      <el-table-column prop="result" label="外出原因">
         <template slot-scope="scope">
           <span :title="scope.row.result">{{ scope.row.result || "-" }}</span>
         </template>
@@ -56,7 +58,9 @@
       <!-- 申请状态列 -->
       <el-table-column prop="result" label="申请状态">
         <template slot-scope="scope">
-          <span :title="scope.row.status">{{ scope.row.status || "-" }}</span>
+          <span
+            :title="scope.row.status==0?'申请中':scope.row.status==1?'已通过':scope.row.status==2?'未通过':'-'"
+          >{{ scope.row.status==0?'申请中':scope.row.status==1?'已通过':scope.row.status==2?'未通过':'-' || "-" }}</span>
         </template>
       </el-table-column>
       <!-- 申请失败原因列 -->
@@ -66,12 +70,13 @@
         </template>
       </el-table-column>
     </el-table>
-    <Add :show.sync="showAdd"/>
+    <Add :show.sync="showAdd" @init="init" />
   </div>
 </template>
 <script>
 import Add from '../../components/add'
 import { Table, TableColumn, Pagination } from 'element-ui'
+import { getapply } from '@/api/user'
 export default {
   name: 'goOut',
   components: {
@@ -80,31 +85,41 @@ export default {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn
   },
-  data () {
+  data() {
     return {
       loading: true,
       showAdd: false,
-      list: [
-        {
-          name: 'hhh',
-          phone: '4564564',
-          address: 'hhhhhhhh',
-          result: '有事哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈',
-          id: 1
-        }
-      ],
-      pagiantion: {
+      list: [],
+      pagination: {
         total: 0,
         page: 1,
         limit: 10
       }
     }
   },
+  mounted() {
+    this.init()
+  },
   methods: {
-    handleCurrentChange () {
-      console.log(1)
+    init() {
+      const send = {
+        page: this.pagination.page,
+        limit: this.pagination.limit
+      }
+      this.loading = true
+      getapply(send).then(res => {
+        this.list = res.data.list
+        this.pagination.total = res.data.total
+        this.loading = false
+      }, () => {
+        this.loading = false
+      })
     },
-    dateformat (time) {
+    handleCurrentChange() {
+      this.list = []
+      this.init()
+    },
+    dateformat(time) {
       const date = new Date(time)
       const year = date.getFullYear()
       let month = date.getMonth() + 1
@@ -137,7 +152,6 @@ export default {
   }
   .header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding: 20px 0;
     input {

@@ -20,11 +20,9 @@
         <div class="header">
           <div class="greet">{{ greeting }}，欢迎来到疫情防控管理系统</div>
           <div class="user">
-            <img
-              :src="src ? src : require('@/assets/common/default-avatar.png')"
-              alt="头像"
-            />
-            <span class="name">张三</span>
+            <img :src="src ? src : require('@/assets/common/default-avatar.png')" alt="头像" />
+            <span class="name">{{name}}</span>
+            <div class="out" @click="loginOut">退出登陆</div>
           </div>
         </div>
         <transition name="fade-transform" mode="out-in">
@@ -35,9 +33,11 @@
   </div>
 </template>
 <script>
+import { personal } from '@/api/admin'
+import { intercept } from '@/mixins/intercept.js'
 export default {
   name: 'App',
-  data () {
+  data() {
     return {
       nav: [
         {
@@ -76,7 +76,8 @@ export default {
           path: '/personal'
         }
       ],
-      src: ''
+      src: '',
+      name: ''
     }
   },
   computed: {
@@ -104,14 +105,29 @@ export default {
       return this.$route.path
     }
   },
+  mounted() {
+    this.getmessage()
+  },
   methods: {
+    getmessage() {
+      personal().then(res => {
+        this.name = res.data.personal.name
+        this.src = res.data.personal.avatar || ''
+      })
+    },
     // 点击导航栏后的回调
-    changeroute (path) {
+    changeroute(path) {
       if (path !== this.$route.path) {
         this.$router.push(path)
       }
+    },
+    loginOut() {
+      this.$toast('成功退出登陆')
+      localStorage.setItem('token', '')
+      window.location.pathname = '/login.html'
     }
-  }
+  },
+  // mixins: [intercept]
 }
 </script>
 <style lang="scss" scoped>
@@ -123,7 +139,7 @@ export default {
   overflow: hidden;
   background-color: #fafbfe;
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
@@ -193,6 +209,7 @@ export default {
         font-size: 20px;
       }
       .user {
+        position: relative;
         img {
           width: 30px;
           height: 30px;
@@ -205,8 +222,26 @@ export default {
           margin-right: 10px;
           vertical-align: middle;
         }
+        .out {
+          position: absolute;
+          bottom: -40px;
+          left: 50%;
+          transform: translateX(-50%);
+          white-space: nowrap;
+          padding: 10px 20px;
+          display: none;
+          cursor: pointer;
+          background-color: #fff;
+          color: #666;
+          &:hover {
+            color: $primary;
+          }
+        }
         &:hover {
           color: $primary;
+          .out {
+            display: block;
+          }
         }
       }
     }

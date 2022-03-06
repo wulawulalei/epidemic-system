@@ -9,9 +9,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "body-parser": "^1.19.2",
     "express": "^4.17.3",
+    "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.3",
+    "mongoose-sex-page": "^1.2.4",
     "nodemon": "^2.0.15",
     "request": "^2.88.2"
   }

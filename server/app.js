@@ -7,6 +7,8 @@ const path = require('path')
 // 创建服务器
 const app = express()
 
+require('./db/connect')
+
 // 引入body-parser模块处理post请求参数
 const bodyPaser = require('body-parser')
 
@@ -29,10 +31,8 @@ app.all('*', function (req, res, next) {
 })
 
 // 当从用户页面切换到管理员页面以及相反或者token过期时的处理
-app.get('/admin.html', (req, res) => {
-  res.redirect('/login.html')
-  // next()
-})
+// app.get('/admin.html', require('./module/intercept'))
+// app.get('/user.html', require('./module/intercept'))
 
 // 开放静态资源
 app.use(express.static(path.join(__dirname, 'web')))

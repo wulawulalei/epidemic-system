@@ -3,20 +3,12 @@
     <div class="bg" v-show="show" @click.self="hidden">
       <div class="add">
         <div class="group">
-          <label for="name">姓名</label>
-          <input type="text" id="name" />
-        </div>
-        <div class="group">
-          <label for="location">住址</label>
-          <input type="text" id="location" />
-        </div>
-        <div class="group">
-          <label for="phone">电话</label>
-          <input type="text" id="phone" />
+          <label for="account">账号</label>
+          <input type="text" id="account" disabled v-model="account" />
         </div>
         <div class="group" v-if="$route.path == '/goout'">
           <label for="result">外出原因</label>
-          <input type="text" id="result" />
+          <input type="text" id="result" v-model="result" />
         </div>
         <div class="group" v-if="$route.path == '/goout'">
           <label for="time">返区时间</label>
@@ -27,12 +19,14 @@
             placeholder="选择日期"
             format="yyyy 年 MM 月 dd 日 HH 时 mm 分"
             value-format="yyyy/MM/dd HH:mm"
-          >
-          </el-date-picker>
+          ></el-date-picker>
         </div>
         <div class="group" v-if="$route.path == '/register'">
-          <label for="checkResult">检测结果</label>
-          <input type="text" id="checkResult" />
+          <label>检测结果</label>
+          <input type="radio" name="checkResult" value="0" id="checkResult0" v-model="checkResult" />
+          <label for="checkResult0">阴性</label>
+          <input type="radio" name="checkResult" value="1" id="checkResult1" v-model="checkResult" />
+          <label for="checkResult1">阳性</label>
         </div>
         <div class="group" v-if="$route.path == '/register'">
           <label for="checkTime">检测时间</label>
@@ -43,15 +37,16 @@
             placeholder="选择日期"
             format="yyyy 年 MM 月 dd 日 HH 时 mm 分"
             value-format="yyyy/MM/dd HH:mm"
-          >
-          </el-date-picker>
+            :picker-options="pickerOptions"
+          ></el-date-picker>
         </div>
-        <ep-button @click.native="addItem">提交</ep-button>
+        <ep-button @click.native="addItem" :disabled="!disabled">提交</ep-button>
       </div>
     </div>
   </transition>
 </template>
 <script>
+import { personal, addapply, addcheck } from '@/api/user'
 import { DatePicker } from 'element-ui'
 export default {
   props: {
@@ -63,26 +58,73 @@ export default {
   components: {
     [DatePicker.name]: DatePicker
   },
-  data () {
+  data() {
     return {
+      //用户账号
+      account: '',
+      //外出原因
+      result: '',
+      //核酸检测时间
       checkTime: '',
-      time: ''
+      //核酸检测结果
+      checkResult: 0,
+      //返区时间
+      time: '',
+      //不能选择当前日期之后的时间
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      },
     }
   },
-  mounted () {},
-  computed: {},
+  mounted() {
+    this.getAccount()
+  },
+  computed: {
+    disabled() {
+      return this.$route.path == '/goout' && this.result && this.time || this.$route.path == '/register' && this.checkResult !== '' && this.checkTime
+    }
+  },
   methods: {
-    hidden () {
+    hidden() {
       this.$emit('update:show', false)
     },
     // 添加信息
-    addItem () {
+    addItem() {
       if (this.$route.path === '/goout') {
-        console.log('goout')
+        const send = {
+          account: this.account,
+          result: this.result,
+          time: this.time
+        }
+        addapply(send).then(res => {
+          if (res.code == 200) {
+            this.$toast(res.message)
+            this.$emit('init')
+            this.$emit('update:show', false)
+            this.result = ''
+            this.time = ''
+          }
+        })
       } else if (this.$route.path === '/register') {
-        const date = new Date(this.checkTime)
-        console.log('register', this.checkTime, date.getTime())
+        const send = { account: this.account, time: this.checkTime, result: this.checkResult }
+        addcheck(send).then(res => {
+          if (res.code == 200) {
+            this.$toast(res.message)
+            this.$emit('init')
+            this.$emit('update:show', false)
+            this.checkResult = 0
+            this.checkTime = ''
+          }
+        })
       }
+    },
+    //获取账号
+    getAccount() {
+      personal().then(res => {
+        this.account = res.data.account
+      })
     }
   }
 }
@@ -114,7 +156,7 @@ export default {
         margin-bottom: 8px;
         font-weight: 600;
       }
-      input[type="text"] {
+      input[type='text'] {
         display: block;
         width: 100%;
         height: calc(2.2125rem + 2px);

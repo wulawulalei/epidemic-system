@@ -11,11 +11,11 @@
     <div class="header">
       <div class="pagination">
         <el-pagination
-          :total="pagiantion.total"
-          :page-size="pagiantion.limit"
+          :total="pagination.total"
+          :page-size="pagination.limit"
           :page-sizes="[2, 4, 6]"
           @current-change="handleCurrentChange"
-          :current-page.sync="pagiantion.page"
+          :current-page.sync="pagination.page"
           :pager-count="5"
           layout="prev, pager, next,jumper"
         ></el-pagination>
@@ -23,17 +23,22 @@
       <div class="search">
         <label>
           Search:
-          <input type="text" placeholder="输入您要搜索公告" v-model="search" @keyup.enter="init" />
+          <input
+            type="text"
+            placeholder="输入您要搜索公告"
+            v-model="search"
+            @keyup.enter="searchList"
+          />
         </label>
       </div>
     </div>
     <div class="contain">
-      <div class="item" @click="toArticle(8)">
-        <img src="../../../../assets/user/dashboard.png" alt />
-        <p>hhhhhhhhhhhhhh</p>
+      <div class="item" @click="toArticle(item._id)" v-for="item in list" :key="item._id">
+        <img :src="item.cover?item.cover:require('@/assets/admin/article.jpg')" alt />
+        <p>{{item.title}}</p>
         <div class="info">
-          <img src="../../../../assets/user/dashboard.png" alt />
-          <div class="avatar">dfd</div>
+          <img :src="item.avatar?item.avatar:require('@/assets/common/default-avatar.png')" alt />
+          <div class="avatar">{{item.author}}</div>
         </div>
       </div>
     </div>
@@ -41,36 +46,57 @@
 </template>
 <script>
 import { Pagination } from 'element-ui'
+import { getarticle } from '@/api/admin'
 export default {
   name: 'notice',
   components: {
     [Pagination.name]: Pagination
   },
-  data () {
+  data() {
     return {
       // 搜索的内容
       search: '',
+      searchText: '',
+      list: [],
       // 分页器
-      pagiantion: {
+      pagination: {
         total: 0,
         page: 1,
         limit: 10
       }
     }
   },
+  mounted() {
+    this.init()
+  },
   methods: {
-    init () {},
-    handleCurrentChange () {
-      console.log(1)
+    init() {
+      let send = {
+        page: this.pagination.page,
+        limit: this.pagination.limit
+      }
+      this.searchText && (send.search = this.searchText)
+      getarticle(send).then(res => {
+        this.list = res.data.list
+        this.pagination.total = res.data.total
+      })
     },
-    toEdit () {
+    handleCurrentChange() {
+      this.list = []
+      this.init()
+    },
+    toEdit() {
       this.$router.push('/editannount')
     },
-    toArticle (id) {
+    toArticle(id) {
       this.$router.push({
         path: `/article/${id}`,
         id
       })
+    },
+    searchList() {
+      this.searchText = this.search
+      this.init()
     }
   }
 }

@@ -4,19 +4,18 @@
       <h4>住户核酸检测情况</h4>
       <p>该数据表为小区住户核酸检测结果表，可自行添加核酸检测结果</p>
       <p>
-        添加一个新的核酸检测结果，<span @click="showAdd = true" class="add"
-          >点击这里进行添加</span
-        >
+        添加一个新的核酸检测结果，
+        <span @click="showAdd = true" class="add">点击这里进行添加</span>
       </p>
     </div>
     <div class="header">
       <div class="pagination">
         <el-pagination
-          :total="pagiantion.total"
-          :page-size="pagiantion.limit"
+          :total="pagination.total"
+          :page-size="pagination.limit"
           :page-sizes="[2, 4, 6]"
           @current-change="handleCurrentChange"
-          :current-page.sync="pagiantion.page"
+          :current-page.sync="pagination.page"
           :pager-count="5"
           layout="prev, pager, next,jumper"
         ></el-pagination>
@@ -24,7 +23,12 @@
       <div class="search">
         <label>
           Search:
-          <input type="text" placeholder="输入您要搜索的人员的核酸检测记录" v-model="search" @keyup.enter="init"/>
+          <input
+            type="text"
+            placeholder="输入您要搜索的人员的核酸检测记录"
+            v-model="search"
+            @keyup.enter="searchList"
+          />
         </label>
       </div>
     </div>
@@ -41,17 +45,19 @@
       </el-table-column>
       <!-- 住址列 -->
       <el-table-column prop="address" label="住址">
-        <template slot-scope="scope">{{
+        <template slot-scope="scope">
+          {{
           scope.row.address == 0
-            ? "A区"
-            : scope.row.address == 1
-            ? "B区"
-            : scope.row.address == 2
-            ? "C区"
-            : scope.row.address == 3
-            ? "D区"
-            : "-" || "-"
-        }}</template>
+          ? "A区"
+          : scope.row.address == 1
+          ? "B区"
+          : scope.row.address == 2
+          ? "C区"
+          : scope.row.address == 3
+          ? "D区"
+          : "-" || "-"
+          }}
+        </template>
       </el-table-column>
       <!-- 电话列 -->
       <el-table-column prop="sex" label="电话">
@@ -64,18 +70,21 @@
       <!-- 检测结果列 -->
       <el-table-column prop="num" label="检测结果">
         <template slot-scope="scope">
-          <span :title="scope.row.result">{{
-            scope.row.num == 0 ? "阴性" : "阳性" || "-"
-          }}</span>
+          <span :title="scope.row.result == 0 ? '阴性' : '阳性' || '-'">
+            {{
+            scope.row.result == 0 ? "阴性" : "阳性" || "-"
+            }}
+          </span>
         </template>
       </el-table-column>
     </el-table>
-    <Add :show.sync="showAdd" />
+    <Add :show.sync="showAdd" @init="init" />
   </div>
 </template>
 <script>
 import Add from '../../components/add'
 import { Table, TableColumn, Pagination } from 'element-ui'
+import { getcheck } from '@/api/admin'
 export default {
   name: 'detail',
   components: {
@@ -84,7 +93,7 @@ export default {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn
   },
-  data () {
+  data() {
     return {
       // 加载中时显示loading
       loading: true,
@@ -92,29 +101,43 @@ export default {
       showAdd: false,
       // 搜索的内容
       search: '',
+      searchText: '',
       // 展示的列表
-      list: [
-        {
-          name: 'hhh',
-          phone: '4564564',
-          address: '0',
-          time: '2022-2-21',
-          num: 1,
-          id: 1
-        }
-      ],
+      list: [],
       // 分页器
-      pagiantion: {
+      pagination: {
         total: 0,
         page: 1,
         limit: 10
       }
     }
   },
+  mounted() {
+    this.init()
+  },
   methods: {
-    init () {},
-    handleCurrentChange () {
-      console.log(1)
+    init() {
+      let send = {
+        page: this.pagination.page,
+        limit: this.pagination.limit
+      }
+      this.searchText && (send.search = this.searchText)
+      this.loading = true
+      getcheck(send).then(res => {
+        this.list = res.data.list
+        this.pagination.total = res.data.total
+        this.loading = false
+      }, () => {
+        this.loading = false
+      })
+    },
+    handleCurrentChange() {
+      this.list = []
+      this.init()
+    },
+    searchList() {
+      this.searchText = this.search
+      this.init()
     }
   }
 }

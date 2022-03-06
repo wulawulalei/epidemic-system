@@ -5,16 +5,12 @@
       <div class="img">
         <img
           :src="src ? src : require('@/assets/common/default-avatar.png')"
-          alt=""
+          alt
           class="now-avatar"
         />
         <label class="change-avatar" id="avatar">
           <i class="el-icon-plus"></i>
-          <input
-            type="file"
-            style="display: none"
-            @change="changeAvatar($event)"
-          />
+          <input type="file" style="display: none" @change="changeAvatar($event)" />
         </label>
       </div>
     </div>
@@ -23,21 +19,26 @@
       <input type="text" id="name" v-model="name" />
     </div>
     <div class="group">
+      <label for="account">账号</label>
+      <input type="text" id="account" v-model="account" disabled />
+    </div>
+    <div class="group">
+      <label for="password">密码</label>
+      <input type="text" id="password" v-model="password" />
+    </div>
+    <div class="group">
       <label for="phone">联系电话</label>
       <input type="text" id="phone" v-model="phone" />
     </div>
-    <div
-      class="group"
-      :style="showVillageList ? { height: '320px' } : { height: 'unset' }"
-    >
-      <label for="">居住区号</label>
+    <div class="group" :style="showVillageList ? { height: '320px' } : { height: 'unset' }">
+      <label for>居住区号</label>
       <div class="choose">
         <div
           class="choose-type"
           :style="showVillageList ? { color: '#3195ff' } : ''"
           @click="showVillageList = !showVillageList"
         >
-          {{ villageList[village].title }}
+          {{ villageList[address].title }}
           <i
             class="el-icon-arrow-down"
             :style="showVillageList ? { transform: 'rotate(180deg)' } : ''"
@@ -50,9 +51,7 @@
               v-for="item in villageList"
               :key="item.id"
               @click="changeType(item.id)"
-            >
-              {{ item.title }}
-            </div>
+            >{{ item.title }}</div>
           </div>
         </transition>
       </div>
@@ -61,17 +60,22 @@
   </div>
 </template>
 <script>
+import { personal, modifyuser } from '@/api/user'
 export default {
-  data () {
+  data() {
     return {
       // 头像
       src: '',
       // 名称
       name: '',
+      //账号
+      account: '',
+      //密码
+      password: '',
       // 手机号
       phone: '',
       // 小区号
-      village: 0,
+      address: 0,
       // 是否展示小区号列表
       showVillageList: false,
       // 图标显示数据类型
@@ -95,9 +99,20 @@ export default {
       ]
     }
   },
-  mounted () {},
+  mounted() {
+    this.init()
+  },
   methods: {
-    changeAvatar (e) {
+    init() {
+      personal().then(res => {
+        this.name = res.data.name
+        this.src = res.data.avatar || ''
+        this.account = res.data.account
+        this.phone = res.data.phone
+        this.address = res.data.address
+      })
+    },
+    changeAvatar(e) {
       const file = e.target.files[0]
       let url
       var reader = new FileReader()
@@ -108,20 +123,25 @@ export default {
         that.src = 'data:image/png;base64,' + url
       }
     },
-    updateInfo () {
-      const send = {
+    updateInfo() {
+      let send = {
+        account: this.account,
         name: this.name,
-        src: this.src,
         phone: this.phone,
-        location: this.location
+        address: this.address,
       }
-      console.log(send)
+      this.password && (send.password = this.password)
+      this.src && (send.avatar = this.src)
+      modifyuser(send).then(res => {
+        this.$toast(res.message)
+        this.init()
+      })
     },
     // 图标显示数据类型改变
-    changeType (id) {
+    changeType(id) {
       this.villageList.map((item) => {
         if (item.id === id) {
-          this.village = id
+          this.address = id
         }
       })
       this.showVillageList = false
@@ -159,7 +179,7 @@ export default {
         background-color: #fff;
       }
     }
-    input[type="text"] {
+    input[type='text'] {
       display: block;
       width: 100%;
       height: calc(2.2125rem + 2px);

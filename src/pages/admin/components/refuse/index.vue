@@ -1,43 +1,52 @@
 <template>
-      <transition name="dialog-fade">
+  <transition name="dialog-fade">
     <div class="bg" v-show="show" @click.self="hidden">
       <div class="add">
         <div class="group">
-          <label for="result">拒绝{{name}}外出原因</label>
-          <input type="text" id="result" />
+          <label for="result">拒绝{{user.name}}外出原因</label>
+          <input type="text" id="result" v-model="result" />
         </div>
-        <ep-button @click.native="addItem">提交</ep-button>
+        <ep-button @click.native="addItem" :disabled="disabled">提交</ep-button>
       </div>
     </div>
   </transition>
 </template>
 <script>
+import { handleapply } from '@/api/admin'
 export default {
   props: {
     show: {
       type: Boolean,
       require: true
     },
-    name: {
-      type: String,
+    user: {
+      type: Object,
       require: true
     }
   },
-  data () {
+  data() {
     return {
+      disabled: false,
+      result: ''
     }
   },
-  created () {
-  },
-  computed: {
-  },
   methods: {
-    hidden () {
+    hidden() {
       this.$emit('update:show', false)
+      this.result = ''
     },
     // 添加信息
-    addItem () {
-      console.log(1)
+    addItem() {
+      const send = {
+        _id: this.user._id,
+        status: 2,
+        failResult: this.result
+      }
+      handleapply(send).then(res => {
+        this.$toast(res.message)
+        this.$emit('init')
+        this.hidden()
+      })
     }
   }
 }
@@ -88,9 +97,9 @@ export default {
         margin-bottom: 16px;
       }
     }
-    .btn{
-        float: right;
-        margin-top: 20px;
+    .btn {
+      float: right;
+      margin-top: 20px;
     }
   }
 }

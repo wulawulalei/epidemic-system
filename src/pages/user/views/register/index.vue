@@ -4,19 +4,18 @@
       <h4>登记检测</h4>
       <p>该数据表为住户本人的核酸检测情况表，可自行添加当前最新的核酸检测结果</p>
       <p>
-        添加一个新的核酸检测结果，<span @click="showAdd = true" class="add"
-          >点击这里进行添加</span
-        >
+        添加一个新的核酸检测结果，
+        <span @click="showAdd = true" class="add">点击这里进行添加</span>
       </p>
     </div>
     <div class="header">
       <div class="pagination">
         <el-pagination
-          :total="pagiantion.total"
-          :page-size="pagiantion.limit"
+          :total="pagination.total"
+          :page-size="pagination.limit"
           :page-sizes="[2, 4, 6]"
           @current-change="handleCurrentChange"
-          :current-page.sync="pagiantion.page"
+          :current-page.sync="pagination.page"
           :pager-count="5"
           layout="prev, pager, next,jumper"
         ></el-pagination>
@@ -35,7 +34,9 @@
       </el-table-column>
       <!-- 住址列 -->
       <el-table-column prop="address" label="住址">
-        <template slot-scope="scope">{{ scope.row.address || "-" }}</template>
+        <template
+          slot-scope="scope"
+        >{{ scope.row.address==0?'A区':scope.row.address==1?'B区':scope.row.address==2?'C区':scope.row.address==3?'D区':'-' || "-" }}</template>
       </el-table-column>
       <!-- 电话列 -->
       <el-table-column prop="sex" label="电话">
@@ -44,7 +45,7 @@
       <!-- 检测结果列 -->
       <el-table-column prop="result" label="检测结果">
         <template slot-scope="scope">
-          <span :title="scope.row.result">{{ scope.row.result || "-" }}</span>
+          <span :title="scope.row.result==0?'阴性':'阳性'">{{ scope.row.result==0?'阴性':'阳性' || "-" }}</span>
         </template>
       </el-table-column>
       <!-- 检测时间列 -->
@@ -54,12 +55,13 @@
         </template>
       </el-table-column>
     </el-table>
-    <Add :show.sync="showAdd" />
+    <Add :show.sync="showAdd" @init="init" />
   </div>
 </template>
 <script>
 import Add from '../../components/add'
 import { Table, TableColumn, Pagination } from 'element-ui'
+import { getcheck } from '@/api/user'
 export default {
   name: 'register',
   components: {
@@ -68,38 +70,39 @@ export default {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn
   },
-  data () {
+  data() {
     return {
       loading: true,
       showAdd: false,
-      list: [
-        {
-          name: 'hhh',
-          phone: '4564564',
-          address: 'hhhhhhhh',
-          result: '有事哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈',
-          id: 1
-        }
-      ],
-      pagiantion: {
+      list: [],
+      pagination: {
         total: 0,
         page: 1,
         limit: 10
       }
     }
   },
+  mounted() {
+    this.init()
+  },
   methods: {
-    handleCurrentChange () {
-      console.log(1)
+    init() {
+      const send = {
+        page: this.pagination.page,
+        limit: this.pagination.limit
+      }
+      this.loading = true
+      getcheck(send).then(res => {
+        this.list = res.data.list
+        this.pagination.total = res.data.total
+        this.loading = false
+      }, () => {
+        this.loading = false
+      })
     },
-    dateformat (time) {
-      const date = new Date(time)
-      const year = date.getFullYear()
-      let month = date.getMonth() + 1
-      month = month > 9 ? month : '0' + month
-      let day = date.getDate()
-      day = day > 9 ? day : '0' + day
-      return `${year}-${month}-${day}`
+    handleCurrentChange() {
+      this.list = []
+      this.init()
     }
   }
 }

@@ -4,20 +4,18 @@
       <div class="delete-user">
         <div class="head">温馨提示</div>
         <div class="content">
-          <!-- <div class="icon"><SvgIcon iconClass="deleteRemind" /></div> -->
           <div class="text">您确定要将{{user.name}}从列表中删除吗？</div>
         </div>
         <div class="button-list">
           <ep-button plain @click.native="hideDialog">取消</ep-button>
-          <ep-button @click.native="comfirmm" :disabled="disabled"
-            >确定</ep-button
-          >
+          <ep-button @click.native="comfirmm" :disabled="disabled">确定</ep-button>
         </div>
       </div>
     </div>
   </transition>
 </template>
 <script>
+import { deleteuser } from '@/api/admin'
 export default {
   props: {
     show: {
@@ -29,17 +27,27 @@ export default {
       require: true
     }
   },
-  data () {
+  data() {
     return {
       disabled: false
     }
   },
   methods: {
-    hideDialog () {
+    hideDialog() {
       this.$emit('update:show', false)
     },
-    comfirmm () {
-      console.log(1)
+    comfirmm() {
+      this.disabled = true
+      deleteuser({
+        account: this.user.account
+      }).then(res => {
+        this.$toast(res.message)
+        this.$emit('init')
+        this.$emit('update:show', false)
+        this.disabled = false
+      }, () => {
+        this.disabled = false
+      })
     }
   }
 }

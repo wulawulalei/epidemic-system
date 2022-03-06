@@ -12,16 +12,12 @@
         <div class="img">
           <img
             :src="src ? src : require('@/assets/common/default-avatar.png')"
-            alt=""
+            alt
             class="now-avatar"
           />
           <label class="change-avatar" id="avatar">
             <i class="el-icon-plus"></i>
-            <input
-              type="file"
-              style="display: none"
-              @change="changeAvatar($event)"
-            />
+            <input type="file" style="display: none" @change="changeAvatar($event)" />
           </label>
         </div>
       </div>
@@ -30,14 +26,19 @@
         <input type="text" id="name" v-model="name" />
       </div>
       <div class="group">
+        <label for="account">账号</label>
+        <input type="text" id="account" v-model="account" disabled />
+      </div>
+      <div class="group">
+        <label for="password">密码</label>
+        <input type="text" id="password" v-model="password" />
+      </div>
+      <div class="group">
         <label for="phone">联系电话</label>
         <input type="text" id="phone" v-model="phone" />
       </div>
-      <div
-        class="group"
-        :style="showVillageList ? { height: '320px' } : { height: 'unset' }"
-      >
-        <label for="">管理区号</label>
+      <div class="group" :style="showVillageList ? { height: '320px' } : { height: 'unset' }">
+        <label for>管理区号</label>
         <div class="choose">
           <div
             class="choose-type"
@@ -57,21 +58,20 @@
                 v-for="item in villageList"
                 :key="item.id"
                 @click="changeType(item.id)"
-              >
-                {{ item.title }}
-              </div>
+              >{{ item.title }}</div>
             </div>
           </transition>
         </div>
       </div>
-      <ep-button @click.native="updateInfo">提交</ep-button>
+      <ep-button @click.native="updateInfo" :disabled="!disabled">提交</ep-button>
     </div>
   </div>
 </template>
 <script>
+import { personal, usermodify } from '@/api/admin'
 export default {
   name: 'personal',
-  data () {
+  data() {
     return {
       // 与本人相关的公告信息
       achievement: [
@@ -88,10 +88,16 @@ export default {
       src: '',
       // 名称
       name: '',
+      //账号
+      account: '',
+      //密码
+      password: '',
       // 手机号
       phone: '',
       // 管理的区号
       village: 0,
+      // 居住的区号
+      address: 0,
       // 区号列表
       showVillageList: false,
       // 图标显示数据类型
@@ -115,8 +121,29 @@ export default {
       ]
     }
   },
+  mounted() {
+    this.init()
+  },
+  computed: {
+    disabled() {
+      return this.name && this.phone
+    }
+  },
   methods: {
-    changeAvatar (e) {
+    init() {
+      personal().then(res => {
+        const { personal, articlenum, readNum } = res.data
+        this.name = personal.name
+        this.src = personal.avatar || ''
+        this.account = personal.account
+        this.phone = personal.phone
+        this.village = personal.village || 0
+        this.address = personal.address
+        this.achievement[0].number = articlenum
+        this.achievement[1].number = readNum
+      })
+    },
+    changeAvatar(e) {
       const file = e.target.files[0]
       let url
       var reader = new FileReader()
@@ -127,17 +154,24 @@ export default {
         that.src = 'data:image/png;base64,' + url
       }
     },
-    updateInfo () {
-      const send = {
+    updateInfo() {
+      let send = {
+        account: this.account,
         name: this.name,
-        src: this.src,
         phone: this.phone,
-        location: this.location
+        village: this.village,
+        authority: 1,
+        address: this.address
       }
-      console.log(send)
+      this.src && (send.avatar = this.src)
+      this.password && (send.password = this.password)
+      usermodify(send).then(res => {
+        this.$toast(res.message)
+        this.init()
+      })
     },
     // 图标显示数据类型改变
-    changeType (id) {
+    changeType(id) {
       this.villageList.map((item) => {
         if (item.id === id) {
           this.village = id
@@ -167,7 +201,7 @@ export default {
         color: #ccc;
       }
       &:not(:last-of-type)::before {
-        content: "";
+        content: '';
         position: absolute;
         right: 0;
         top: 70px;
@@ -204,7 +238,7 @@ export default {
           background-color: #fff;
         }
       }
-      input[type="text"] {
+      input[type='text'] {
         display: block;
         width: 100%;
         height: calc(2.2125rem + 2px);

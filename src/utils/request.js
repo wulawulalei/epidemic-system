@@ -1,35 +1,30 @@
 import axios from 'axios'
 import qs from 'qs'
 // import store from '@/store'
-import {
-  Message
-} from 'element-ui'
+import { Message } from 'element-ui'
 
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   withCredentials: true,
   headers: {
-    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+    'Content-Type': 'application/x-www-form-urlencoded'
   }
 })
 
 // request interceptor
 service.interceptors.request.use(
   (config) => {
-    if (config.url !== '/login') {
-      if (config.method === 'post') {
-        config.data = qs.stringify({
-          ...config.data
-        })
-      } else if (config.method === 'get') {
-        config.params = {
-          ...config.params
-        }
-      }
-    } else {
+    const token = localStorage.getItem('token') || undefined
+    if (config.method === 'post') {
       config.data = qs.stringify({
-        ...config.data
+        ...config.data,
+        token
+      })
+    } else if (config.method === 'get') {
+      config.params = qs.stringify({
+        ...config.params,
+        token
       })
     }
     return config

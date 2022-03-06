@@ -2,36 +2,71 @@
   <div id="article">
     <div class="banner">
       <div class="info">
-        <div class="title">{{article.title}}</div>
+        <div class="title">{{title}}</div>
         <div class="article-info">
-          <img class="avatar" />
-          <span class="author">{{article.author}}</span>
+          <img class="avatar" :src="avatar?avatar:require('@/assets/common/default-avatar.png')" />
+          <span class="author">{{author}}</span>
           ·
-          <span class="article-time">{{article.time}}</span>
+          <span class="article-time">{{time}}</span>
           ·
-          <span class="read-num">{{article.read}}</span>
+          <span class="read-num">{{read}}</span>
           次阅读
         </div>
       </div>
     </div>
     <div class="content">
-      <p>水水水水水水水水水水水水水水水水士大夫精神的好伐拉会尽快答复接口连接啊考虑实际的风口浪尖撒飞机开绿灯撒加分类水水水</p>
+      <p v-for="(item,index) in content" :key="index">{{item}}</p>
     </div>
   </div>
 </template>
 <script>
+import { getarticle } from '@/api/user'
 export default {
   name: 'App',
-  data () {
+  data() {
     return {
-      article: {
-        title: 'Web前端面试题：写一个mul函数',
-        avatar: '',
-        author: 'Toretto',
-        time: '2021-12-01 14:22',
-        read: '33',
-        content: ''
+      title: '',
+      avatar: '',
+      author: '',
+      time: '',
+      read: '0',
+      content: []
+    }
+  },
+  mounted() {
+    this.init()
+  },
+  methods: {
+    init() {
+      getarticle({
+        id: this.$route.params.id
+      }).then(res => {
+        const { title, author, content, publishdate, read, avatar } = res.data
+        this.title = title
+        this.author = author
+        this.time = this.dateformat(publishdate)
+        this.read = read
+        this.avatar = avatar || ''
+        this.content = this.contentformat(content)
+      })
+    },
+    dateformat(time) {
+      const date = new Date(time)
+      const year = date.getFullYear()
+      let month = date.getMonth() + 1
+      month = month > 9 ? month : '0' + month
+      let day = date.getDate()
+      day = day > 9 ? day : '0' + day
+      return `${year}-${month}-${day}`
+    },
+    contentformat(content) {
+      let result = []
+      if (content.indexOf('\n') > -1) {
+        result = content.split('\n')
+      } else {
+        result.push(content)
       }
+      return result
     }
   }
 }
@@ -78,7 +113,7 @@ export default {
     max-width: 1000px;
     margin: 0 auto;
     padding: 66px 15px 10px;
-    p{
+    p {
       width: 100%;
       line-height: 30px;
       margin: 20px 0;

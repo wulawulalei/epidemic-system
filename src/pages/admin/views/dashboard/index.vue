@@ -3,15 +3,11 @@
     <div class="village">
       <div class="item" v-for="(item, index) in nav" :key="index">
         <h5 class="title">{{ item.title }}</h5>
-        <h3 class="number">{{ item.number }}</h3>
+        <h3 class="number">{{ item.number||0 }}</h3>
       </div>
     </div>
     <div class="row">
-      <div
-        class="chart"
-        ref="chart"
-        style="width: calc(100% - 330px); height: 430px"
-      ></div>
+      <div class="chart" ref="chart" style="width: calc(100% - 330px); height: 430px"></div>
       <div class="performance">
         <el-calendar v-model="time"></el-calendar>
       </div>
@@ -20,14 +16,14 @@
 </template>
 <script>
 import Echarts from 'echarts'
-import { epidemic } from '@/api/admin'
+import { epidemic, dashboard } from '@/api/admin'
 import { Calendar } from 'element-ui'
 export default {
   name: 'dashboard',
   components: {
     [Calendar.name]: Calendar
   },
-  data () {
+  data() {
     return {
       nav: [
         {
@@ -88,11 +84,12 @@ export default {
       time: new Date()
     }
   },
-  mounted () {
+  mounted() {
     this.getEpidMessage()
+    this.getDashboard()
   },
   computed: {
-    options () {
+    options() {
       const xData = this.epidList.map((item) => {
         return item.title
       })
@@ -215,8 +212,16 @@ export default {
     }
   },
   methods: {
+    getDashboard() {
+      dashboard().then(res => {
+        this.nav[0].number = res.data.user
+        this.nav[1].number = res.data.article
+        this.nav[2].number = res.data.goout
+        this.nav[3].number = res.data.check
+      })
+    },
     // 获取疫情信息
-    getEpidMessage () {
+    getEpidMessage() {
       epidemic().then(
         (res) => {
           const input = res.data.chinaTotal.total.input
@@ -269,7 +274,7 @@ export default {
       )
     },
     // 曲线图初始化
-    initEcharts () {
+    initEcharts() {
       const myChart = Echarts.init(this.$refs.chart)
       myChart.setOption(this.options)
     }

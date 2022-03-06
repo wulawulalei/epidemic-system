@@ -1,49 +1,67 @@
 <template>
   <div id="editannount" class="body-common">
     <div class="group">
-      <label for="name">公告标题</label>
+      <label for="title">公告标题</label>
       <input
         type="text"
-        id="name"
-        v-model="name"
-        ref="name"
-        @input="watchInput('name', 20, 'remind', $event)"
+        id="title"
+        v-model="title"
+        ref="title"
+        @input="watchInput('title', 20, 'remind', $event)"
       />
-      <div class="text-num">{{ name.length || 0 }}/20</div>
+      <div class="text-num">{{ title.length || 0 }}/20</div>
       <div class="remind" ref="remind">公告标题不可为空!</div>
     </div>
     <div class="group">
       <label for="avatar">作者</label>
-      <input type="text" id="avatar" disabled />
+      <input type="text" id="avatar" disabled v-model="author" />
     </div>
     <div class="group">
       <label>封面</label>
       <input type="file" @change="showImg($event)" />
-      <img :src="imgUrl" alt="" ref="noticeimg" />
+      <img :src="cover" alt ref="noticeimg" />
     </div>
     <div class="group">
-      <label for="container">内容</label>
-      <textarea type="text" id="container" v-model="container" ref="container"/>
+      <label for="content">内容</label>
+      <textarea type="text" id="content" v-model="content" ref="content" />
     </div>
-    <ep-button @click="sendNotice">发布</ep-button>
+    <ep-button @click="sendNotice" :disabled="!disabled">发布</ep-button>
   </div>
 </template>
 <script>
+import { addarticle, personal } from '@/api/admin'
 export default {
   name: 'editannount',
-  data () {
+  data() {
     return {
-      // 名称
-      name: '',
+      // 公告名称
+      title: '',
+      // 作者
+      author: '',
       // 封面背景
-      imgUrl: '',
+      cover: '',
       // 公告内容
-      container: ''
+      content: '',
+      account: ''
+    }
+  },
+  mounted() {
+    this.init()
+  },
+  computed: {
+    disabled() {
+      return this.title && this.author && this.content
     }
   },
   methods: {
+    init() {
+      personal().then(res => {
+        this.author = res.data.personal.name
+        this.account = res.data.personal.account
+      })
+    },
     // 输入框超出截除
-    watchInput (name, maxLength, refName, e) {
+    watchInput(name, maxLength, refName, e) {
       if (this[name].length > maxLength) {
         this[name] = this[name].slice(0, maxLength)
       }
@@ -56,7 +74,7 @@ export default {
       }
     },
     // 选择封面后的回调
-    showImg (e) {
+    showImg(e) {
       const file = e.target.files[0]
       let url
       var reader = new FileReader()
@@ -64,16 +82,22 @@ export default {
       const that = this
       reader.onload = function (e) {
         url = e.target.result.substring(this.result.indexOf(',') + 1)
-        that.imgUrl = 'data:image/png;base64,' + url
+        that.cover = 'data:image/png;base64,' + url
       }
     },
     // 发布公告
-    sendNotice () {
-      if (this.$refs.container.value.indexOf('\n') > -1) {
-        console.log(this.container)
-      } else {
-        console.log(this.$refs.container.value)
+    sendNotice() {
+      const send = {
+        title: this.title,
+        author: this.author,
+        cover: this.cover,
+        content: this.content,
+        account: this.account
       }
+      addarticle(send).then(res => {
+        this.$toast(res.message)
+        this.$router.path('/notice')
+      })
     }
   }
 }
@@ -89,7 +113,8 @@ export default {
       margin-bottom: 8px;
       font-weight: 600;
     }
-    input[type="text"],textarea {
+    input[type='text'],
+    textarea {
       display: block;
       width: 100%;
       height: calc(2.2125rem + 2px);
@@ -104,7 +129,7 @@ export default {
       border-radius: 4px;
       outline: none;
     }
-    textarea{
+    textarea {
       height: unset;
     }
     .text-num {
@@ -130,7 +155,7 @@ export default {
       margin-bottom: 16px;
     }
   }
-  .btn{
+  .btn {
     float: right;
     margin-top: 20px;
   }
