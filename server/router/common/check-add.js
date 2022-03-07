@@ -2,6 +2,8 @@ const { check, validate } = require('../../db/check')
 
 const { users } = require('../../db/user')
 
+const { noUserText } = require('../../config/index')
+
 module.exports = async (req, res) => {
   try {
     const { account, time, result } = req.body
@@ -9,7 +11,7 @@ module.exports = async (req, res) => {
     if (!user) {
       res.send({
         code: 400,
-        message: '该用户不存在'
+        message: noUserText
       })
     } else {
       const { name, address, phone } = user

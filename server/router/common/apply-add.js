@@ -2,6 +2,8 @@ const { users } = require('../../db/user')
 
 const { goout, validate } = require('../../db/goout')
 
+const { noUserText, addApplyText, hadApplyText } = require('../../config/index.js')
+
 module.exports = async (req, res) => {
   try {
     const { account, result, time } = req.body
@@ -9,7 +11,7 @@ module.exports = async (req, res) => {
     if (!user) {
       res.send({
         code: 400,
-        message: '没有该用户'
+        message: noUserText
       })
     } else {
       const applyList = await goout.find({ account })
@@ -32,12 +34,12 @@ module.exports = async (req, res) => {
         await goout.create(addGo)
         res.send({
           code: 200,
-          message: '成功添加外出申请记录'
+          message: addApplyText
         })
       } else {
         res.send({
           code: 400,
-          message: '您当前已经有外出申请了'
+          message: hadApplyText
         })
       }
     }

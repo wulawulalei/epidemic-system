@@ -30,10 +30,6 @@ app.all('*', function (req, res, next) {
   next()
 })
 
-// 当从用户页面切换到管理员页面以及相反或者token过期时的处理
-// app.get('/admin.html', require('./module/intercept'))
-// app.get('/user.html', require('./module/intercept'))
-
 // 开放静态资源
 app.use(express.static(path.join(__dirname, 'web')))
 

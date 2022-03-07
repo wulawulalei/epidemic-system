@@ -2,14 +2,16 @@ const webToken = require('./token')
 
 const { users } = require('../db/user')
 
-const check = async (req, res, next) => {
+const { noUserText, tokenExpireCode, tokenExpireText } = require('../config/index')
+
+const check = async (req, res) => {
   const result = webToken.verify(req.body.token)
   if (result) {
     const user = await users.findOne({ account: result.message })
     if (!user) {
       res.send({
         code: 400,
-        message: '没有该用户'
+        message: noUserText
       })
     } else {
       res.send({
@@ -17,10 +19,10 @@ const check = async (req, res, next) => {
         identity: user.authority
       })
     }
-    next()
   } else {
     res.send({
-      code: 200
+      code: tokenExpireCode,
+      message: tokenExpireText
     })
   }
 }

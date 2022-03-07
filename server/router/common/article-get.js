@@ -2,6 +2,8 @@ const article = require('../../db/article')
 
 const webtoken = require('../../module/token')
 
+const { tokenExpireText, tokenExpireCode } = require('../../config/index')
+
 // 导入数据库分页模块
 const mongoosepage = require('mongoose-sex-page')
 
@@ -11,8 +13,8 @@ module.exports = async (req, res) => {
     const result = webtoken.verify(token)
     if (!result) {
       res.send({
-        code: 400,
-        message: 'token已过期'
+        code: tokenExpireCode,
+        message: tokenExpireText
       })
     } else {
       if (id) {

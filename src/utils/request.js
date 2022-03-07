@@ -30,7 +30,6 @@ service.interceptors.request.use(
     return config
   },
   (error) => {
-    console.log(error)
     return Promise.reject(error)
   }
 )
@@ -42,6 +41,14 @@ service.interceptors.response.use(
     const res = response.data
     if (res.code === 10000 || res.code === 200) {
       return res
+    } else if (res.code === 600) {
+      window.location.pathname = '/login.html'
+    } else if (res.code === 700) {
+      if (res.identity === 0) {
+        window.location.pathname = '/user.html'
+      } else if (res.identity === 1) {
+        window.location.pathname = '/admin.html'
+      }
     } else {
       Message({
         message: res.message || 'Error',

@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt')
 
 const { users, validate } = require('../../db/user')
 
+const { addUserText, hadUser } = require('../../config/index')
+
 module.exports = async (req, res) => {
   try {
     const { account, password, phone, address, authority, name, village, inLogin } = req.body
@@ -12,7 +14,7 @@ module.exports = async (req, res) => {
     if (user) {
       res.send({
         code: 400,
-        message: '该账号已被注册，请重新编辑账号再进行注册'
+        message: hadUser
       })
     } else {
       var addUser = { account: Number(account), password, phone, address: Number(address), name, authority: 0 }
@@ -34,7 +36,7 @@ module.exports = async (req, res) => {
       } else {
         res.send({
           code: 200,
-          message: '成功创建用户'
+          message: addUserText
         })
       }
     }

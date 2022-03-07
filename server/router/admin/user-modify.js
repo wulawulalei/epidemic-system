@@ -9,6 +9,8 @@ const { check } = require('../../db/check')
 
 const article = require('../../db/article')
 
+const { noUserText, updateUserText } = require('../../config/index')
+
 module.exports = async (req, res) => {
   try {
     const { account, password, phone, address, authority, name, village, avatar } = req.body
@@ -16,7 +18,7 @@ module.exports = async (req, res) => {
     if (!user) {
       res.send({
         code: 400,
-        message: '该用户不存在'
+        message: noUserText
       })
     } else {
       var updateUser = { account: Number(account), phone, address: Number(address), name }
@@ -45,7 +47,7 @@ module.exports = async (req, res) => {
       articleList && await article.updateMany({ account }, { $set: { author: name, avatar } })
       res.send({
         code: 200,
-        message: '成功修改用户信息'
+        message: updateUserText
       })
     }
   } catch (error) {

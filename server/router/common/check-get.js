@@ -4,13 +4,14 @@ const { users } = require('../../db/user')
 
 const webtoken = require('../../module/token')
 
+const { noUserText, tokenExpireText, tokenExpireCode } = require('../../config/index')
+
 // 导入数据库分页模块
 const mongoosepage = require('mongoose-sex-page')
 
 module.exports = async (req, res) => {
   // 判断用户是普通用户还是管理员
   try {
-    console.log(req.body)
     const { page, limit, search, token } = req.body
     const result = webtoken.verify(token)
     // 判断token是否过期
@@ -49,13 +50,13 @@ module.exports = async (req, res) => {
       } else {
         res.send({
           code: 400,
-          message: '该用户不存在'
+          message: noUserText
         })
       }
     } else {
       res.send({
-        code: 400,
-        message: 'token已过期'
+        code: tokenExpireCode,
+        message: tokenExpireText
       })
     }
   } catch (error) {

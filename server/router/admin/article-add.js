@@ -4,14 +4,16 @@ const { users } = require('../../db/user')
 
 const webtoken = require('../../module/token')
 
+const { tokenExpireText, tokenExpireCode, addArticleText } = require('../../config/index')
+
 module.exports = async (req, res) => {
   try {
     const { title, author, cover, content, account, token } = req.body
     const result = webtoken.verify(token)
     if (!result) {
       res.send({
-        code: 400,
-        message: 'token已过期'
+        code: tokenExpireCode,
+        message: tokenExpireText
       })
     } else {
       const user = await users.findOne({ account })
@@ -21,7 +23,7 @@ module.exports = async (req, res) => {
       await article.create(addArticle)
       res.send({
         code: 200,
-        message: '公告添加成功'
+        message: addArticleText
       })
     }
   } catch (error) {

@@ -1,6 +1,6 @@
 const { goout, validate } = require('../../db/goout')
 
-const { noApply } = require('../../config/index')
+const { noApplyText } = require('../../config/index')
 
 module.exports = async (req, res) => {
   try {
@@ -9,7 +9,7 @@ module.exports = async (req, res) => {
     if (!record) {
       res.send({
         code: 400,
-        message: noApply
+        message: noApplyText
       })
     } else {
       const { name, account, phone, address, time, result } = record
