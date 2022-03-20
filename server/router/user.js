@@ -3,7 +3,7 @@ const express = require('express')
 const user = express.Router()
 
 // 验证token
-user.post('/beforeEnter', require('../module/intercept'))
+user.post('/*', require('../module/requireIntercept'))
 
 // 获取疫情数据
 user.get('/EPID', require('./common/epid'))

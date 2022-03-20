@@ -96,7 +96,8 @@ export default {
           title: 'D区',
           id: 3
         }
-      ]
+      ],
+      avatarFile: ''
     }
   },
   mounted() {
@@ -114,6 +115,8 @@ export default {
     },
     changeAvatar(e) {
       const file = e.target.files[0]
+      this.avatarFile = file
+      // console.log(this.avatarFile);
       let url
       var reader = new FileReader()
       reader.readAsDataURL(file)
@@ -131,7 +134,7 @@ export default {
         address: this.address,
       }
       this.password && (send.password = this.password)
-      this.src && (send.avatar = this.src)
+      this.src && (send.avatar = this.avatarFile)
       modifyuser(send).then(res => {
         this.$toast(res.message)
         this.init()

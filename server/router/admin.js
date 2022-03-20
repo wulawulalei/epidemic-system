@@ -3,7 +3,7 @@ const express = require('express')
 const admin = express.Router()
 
 // 验证token
-admin.post('/beforeEnter', require('../module/intercept'))
+admin.post('/*', require('../module/requireIntercept'))
 
 // 首页信息
 admin.post('/dashboard', require('./admin/dashboard'))
@@ -40,9 +40,6 @@ admin.post('/check-get', require('./common/check-get'))
 
 // 获取文章列表
 admin.post('/article-get', require('./common/article-get'))
-
-// 阅读文章
-admin.post('/article-read', require('./common/article-read'))
 
 // 发布文章
 admin.post('/article-add', require('./admin/article-add'))
