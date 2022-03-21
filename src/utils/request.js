@@ -1,6 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
-// import store from '@/store'
+import store from '@/store'
 import { Message } from 'element-ui'
 
 // create an axios instance
@@ -15,7 +15,7 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token') || undefined
+    const token = store.getters.token
     if (config.method === 'post') {
       config.data = qs.stringify({
         ...config.data,

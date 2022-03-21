@@ -29,10 +29,10 @@
   </div>
 </template>
 <script>
-import { addarticle, personal } from '@/api/admin'
+import { addarticle } from '@/api/admin'
 export default {
   name: 'editannount',
-  data() {
+  data () {
     return {
       // 公告名称
       title: '',
@@ -45,23 +45,18 @@ export default {
       account: ''
     }
   },
-  mounted() {
-    this.init()
+  created () {
+    this.author = this.$store.getters.username
+    this.account = this.$store.getters.account
   },
   computed: {
-    disabled() {
+    disabled () {
       return this.title && this.author && this.content
     }
   },
   methods: {
-    init() {
-      personal().then(res => {
-        this.author = res.data.personal.name
-        this.account = res.data.personal.account
-      })
-    },
     // 输入框超出截除
-    watchInput(name, maxLength, refName, e) {
+    watchInput (name, maxLength, refName, e) {
       if (this[name].length > maxLength) {
         this[name] = this[name].slice(0, maxLength)
       }
@@ -74,7 +69,7 @@ export default {
       }
     },
     // 选择封面后的回调
-    showImg(e) {
+    showImg (e) {
       const file = e.target.files[0]
       let url
       var reader = new FileReader()
@@ -86,7 +81,7 @@ export default {
       }
     },
     // 发布公告
-    sendNotice() {
+    sendNotice () {
       const send = {
         title: this.title,
         author: this.author,

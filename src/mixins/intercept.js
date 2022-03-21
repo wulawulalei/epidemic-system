@@ -1,9 +1,13 @@
 import { beforeEnter } from '@/api/login'
+import store from '@/store'
 export const intercept = {
   beforeCreate () {
-    const token = localStorage.getItem('token') || undefined
+    const token = store.getters.token
     if (token) {
       beforeEnter().then((res) => {
+        res.username && (this.$store.commit('app/changeUsername', res.username))
+        res.avatar && (this.$store.commit('app/changeAvatar', res.avatar))
+        res.account && (this.$store.commit('app/changeAccount', res.account))
         if (res.identity == 0 && window.location.pathname != '/user.html') {
           window.location.pathname = '/user.html'
         } else if (

@@ -76,11 +76,11 @@ export default {
       // 与本人相关的公告信息
       achievement: [
         {
-          number: 666,
+          number: 0,
           title: '发布公告数'
         },
         {
-          number: 666,
+          number: 0,
           title: '公告浏览数'
         }
       ],

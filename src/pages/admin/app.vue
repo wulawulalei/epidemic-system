@@ -20,7 +20,7 @@
         <div class="header">
           <div class="greet">{{ greeting }}，欢迎来到疫情防控管理系统</div>
           <div class="user">
-            <img :src="src ? src : require('@/assets/common/default-avatar.png')" alt="头像" />
+            <img :src="avatar ? avatar : require('@/assets/common/default-avatar.png')" alt="头像" />
             <span class="name">{{name}}</span>
             <div class="out" @click="loginOut">退出登陆</div>
           </div>
@@ -33,11 +33,10 @@
   </div>
 </template>
 <script>
-import { personal } from '@/api/admin'
-import { intercept } from '@/mixins/intercept.js'
+// import { intercept } from '@/mixins/intercept.js'
 export default {
   name: 'App',
-  data() {
+  data () {
     return {
       nav: [
         {
@@ -76,9 +75,13 @@ export default {
           path: '/personal'
         }
       ],
-      src: '',
+      avatar: '',
       name: ''
     }
+  },
+  created () {
+    this.avatar = this.$store.getters.avatar
+    this.name = this.$store.getters.username
   },
   computed: {
     greeting: () => {
@@ -105,28 +108,19 @@ export default {
       return this.$route.path
     }
   },
-  mounted() {
-    this.getmessage()
-  },
   methods: {
-    getmessage() {
-      personal().then(res => {
-        this.name = res.data.personal.name
-        this.src = res.data.personal.avatar || ''
-      })
-    },
     // 点击导航栏后的回调
-    changeroute(path) {
+    changeroute (path) {
       if (path !== this.$route.path) {
         this.$router.push(path)
       }
     },
-    loginOut() {
+    loginOut () {
       this.$toast('成功退出登陆')
       localStorage.setItem('token', '')
       window.location.pathname = '/login.html'
     }
-  },
+  }
   // mixins: [intercept]
 }
 </script>

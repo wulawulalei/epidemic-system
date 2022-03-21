@@ -16,7 +16,10 @@ const check = async (req, res) => {
     } else {
       res.send({
         code: 200,
-        identity: user.authority
+        identity: user.authority,
+        username: user.name,
+        avatar: user.avatar || null,
+        account: user.account
       })
     }
   } else {

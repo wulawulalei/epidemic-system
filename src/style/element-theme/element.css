@@ -1,0 +1,77 @@
+@font-face {
+	font-family: 'element-icons';
+	src: url('./fonts/element-icons.woff') format('woff'), url('./fonts/element-icons.ttf') format('truetype');
+	/* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+	font-weight: normal;
+	font-display: 'auto';
+	font-style: normal;
+}
+
+[class^='el-icon-'],
+[class*=' el-icon-'] {
+	/* use !important to prevent issues with browser extensions that change fonts */
+	font-family: 'element-icons' !important;
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	vertical-align: baseline;
+	display: inline-block;
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.el-icon-caret-right:before {
+	content: '\e791';
+}
+.el-icon-arrow-down:before {
+	content: '\e6df';
+}
+.el-icon-folder-opened:before {
+	content: '\e784';
+}
+
+.el-icon-folder:before {
+	content: '\e78a';
+}
+.el-icon-loading:before {
+	content: '\e6cf';
+}
+.el-icon-loading {
+	-webkit-animation: rotating 2s linear infinite;
+	animation: rotating 2s linear infinite;
+}
+@keyframes rotating {
+	0% {
+		-webkit-transform: rotateZ(0deg);
+		transform: rotateZ(0deg);
+	}
+	100% {
+		-webkit-transform: rotateZ(360deg);
+		transform: rotateZ(360deg);
+	}
+}
+.el-tree-node__expand-icon {
+	cursor: pointer;
+	color: #999999;
+	font-size: 12px;
+	-webkit-transform: rotate(0deg);
+	transform: rotate(0deg);
+	-webkit-transition: -webkit-transform 0.3s ease-in-out;
+	transition: -webkit-transform 0.3s ease-in-out;
+	transition: transform 0.3s ease-in-out;
+}
+.el-tree-node__content > .el-tree-node__expand-icon {
+	padding: 6px 6px 0 6px;
+}
+.el-tree-node__expand-icon.expanded {
+	-webkit-transform: rotate(90deg);
+	transform: rotate(90deg);
+}
+.el-tree-node__expand-icon.is-leaf {
+	color: transparent;
+	cursor: default;
+}

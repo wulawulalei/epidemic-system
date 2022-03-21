@@ -1,8 +1,9 @@
 const titles = require('./titles.js')
 const glob = require('glob')
 const path = require('path')
-const merge = require('webpack-merge')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const pages = {}
+const isProduction = process.env.NODE_ENV == 'production'
 
 glob.sync('./src/pages/**/app.js').forEach((entry) => {
   const chunk = entry.split('./src/pages/')[1].split('/app.js')[0]
@@ -16,7 +17,7 @@ glob.sync('./src/pages/**/app.js').forEach((entry) => {
     })
 })
 module.exports = {
-  publicPath: process.env.NODE_ENV == 'production' ? './' : '',
+  publicPath: isProduction ? './' : '',
   pages,
   lintOnSave: false,
   productionSourceMap: true,
@@ -47,32 +48,39 @@ module.exports = {
       .set('components', resolve('src/components'))
 
     // build optimize
+    config.devtool(isProduction ? 'cheap-module-source-map' : 'cheap-module-eval-source-map')
     config.plugins.delete('named-chunks')
-
-    // resolveLoader
-    config.resolveLoader.modules
-      .add(path.resolve(__dirname, './build/loader'))
-      .end()
+    config.optimization.splitChunks({
+      cacheGroups: {
+        common: {
+          name: 'chunk-common',
+          chunks: 'initial',
+          minChunks: 1,
+          maxInitialRequests: 5,
+          minSize: 0,
+          priority: 1,
+          reuseExistingChunk: true,
+          enforce: true
+        },
+        vendors: {
+          name: 'chunk-vendors',
+          test: /[\\/]node_modules[\\/]/,
+          chunks: 'initial',
+          minChunks: 1,
+          maxInitialRequests: 5,
+          minSize: 0,
+          priority: 2,
+          reuseExistingChunk: true,
+          enforce: true
+        }
+      }
+    })
 
     // scss
     const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
     types.forEach((type) =>
       addStyleResource(config.module.rule('scss').oneOf(type))
     )
-
-    // svg
-    config.module.rule('svg').exclude.add(resolve('src/icons')).end()
-    config.module
-      .rule('icons')
-      .test(/\.svg$/)
-      .include.add(resolve('src/icons'))
-      .end()
-      .use('svg-sprite-loader')
-      .loader('svg-sprite-loader')
-      .options({
-        symbolId: '[name]'
-      })
-      .end()
 
     // img
     config.module
@@ -81,6 +89,11 @@ module.exports = {
       .use('url-loader')
       .loader('url-loader')
       .end()
+  },
+  configureWebpack: () => {
+    return {
+      plugins: [new BundleAnalyzerPlugin()]
+    }
   }
 }
 
