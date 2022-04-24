@@ -12,6 +12,7 @@ module.exports = {
   noUserText: '该用户不存在',
   noUserCode: 800,
   addArticleText: '公告添加成功',
+  hasArticle: '该公告名称已存在',
   addUserText: '成功创建用户',
   hadUser: '该账号已被注册，请重新编辑账号再进行注册',
   deleteUserText: '成功删除该用户',

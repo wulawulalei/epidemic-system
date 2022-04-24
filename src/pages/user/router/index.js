@@ -1,6 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import { checktoken } from '@/api/user'
+// import { checktoken } from '@/api/user'
+const dashboard = import('../views/dashboard')
+const article = import('../views/article')
+const personal = import('../views/personal')
+const register = import('../views/register')
+const goOut = import('../views/goOut')
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -38,6 +44,5 @@ const routes = [
 const router = new VueRouter({
   routes
 })
-
 
 export default router

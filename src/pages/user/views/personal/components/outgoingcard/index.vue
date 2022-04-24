@@ -2,27 +2,42 @@
   <div class="outgoing-card">
     <div class="title">临时通行证</div>
     <div class="card" ref="card">
-      <img :src="avatar ? avatar : require('@/assets/common/default-avatar.png')" alt />
+      <img
+        :src="avatar ? avatar : require('@/assets/common/default-avatar.png')"
+        alt
+      />
       <div class="info">
         <div class="status">
           <i
-            :class="dateformat(this.time)==='已过期'?'el-icon-error':'el-icon-success'"
-            :style="dateformat(this.time)==='已过期'?{color:'red'}:{color:'green'}"
-            v-if="status==2||status==1"
+            :class="
+              dateformat(this.time) === '已过期'
+                ? 'el-icon-error'
+                : 'el-icon-success'
+            "
+            :style="
+              dateformat(this.time) === '已过期'
+                ? { color: 'red' }
+                : { color: 'green' }
+            "
+            v-if="status == 2 || status == 1"
           ></i>
         </div>
-        <div class="name">{{name}}</div>
-        <div class="result">{{result}}</div>
-        <div class="time" v-if="status==2||status==1">
+        <div class="name">{{ name }}</div>
+        <div class="result">{{ result }}</div>
+        <div class="time" v-if="status == 2 || status == 1">
           过期时间：
-          <span :class="dateformat(this.time)==='已过期'?'expire':''">{{this.time}}</span>
+          <span :class="dateformat(this.time) === '已过期' ? 'expire' : ''">{{
+            this.time
+          }}</span>
         </div>
-        <div class="time" v-if="status==2||status==1">
+        <div class="time" v-if="status == 2 || status == 1">
           剩余时长：
-          <span :class="dateformat(this.time)==='已过期'?'expire':''">{{dateformat(this.time)}}</span>
+          <span :class="dateformat(this.time) === '已过期' ? 'expire' : ''">{{
+            dateformat(this.time)
+          }}</span>
         </div>
-        <div class="time" v-if="status==0">正在申请中……</div>
-        <div class="time" v-if="status==3">暂无外出申请</div>
+        <div class="time" v-if="status == 0">正在申请中……</div>
+        <div class="time" v-if="status == 3">暂无外出申请</div>
       </div>
     </div>
     <ep-button @click.native="downloadCard">点此下载临时通行证</ep-button>
@@ -32,43 +47,48 @@
 import { getapply } from '@/api/user'
 import html2canvas from 'html2canvas'
 export default {
-  data() {
+  data () {
     return {
       // 头像
       avatar: '',
       // 名称
-      name: 'hhh',
+      name: '',
       // 外出原因
-      result: '有事斤斤计较急急急急急急急急急急急急急急急',
+      result: '',
       // 返区时间
-      time: '2022/2/24 17:00',
-      //请求状态
+      time: '',
+      // 请求状态
       status: 3
     }
   },
-  mounted() {
+  mounted () {
+    this.avatar = this.$store.getters.avatar
     this.init()
   },
   computed: {},
   methods: {
-    init() {
+    init () {
       getapply({
         page: 1,
         limit: 10,
         personal: 1
-      }).then(res => {
-        this.avatar = res.data.avatar || ''
+      }).then((res) => {
         this.name = res.data.name || ''
         this.result = res.data.result || ''
         this.time = res.data.time || ''
-        this.status = res.data.status > 0 ? res.data.status : res.data.status == 0 ? res.data.status : 3
+        this.status =
+          res.data.status > 0
+            ? res.data.status
+            : res.data.status === 0
+              ? res.data.status
+              : 3
       })
     },
-    downloadCard() {
+    downloadCard () {
       const canvas = document.createElement('canvas')
       canvas.width = this.$refs.card.offsetWidth
       canvas.height = this.$refs.card.offsetHeight
-      html2canvas(this.$refs.card).then(canvas => {
+      html2canvas(this.$refs.card).then((canvas) => {
         // canvas为转换后的Canvas对象
         const a = document.createElement('a')
         a.setAttribute('href', canvas.toDataURL())
@@ -76,7 +96,7 @@ export default {
         a.click()
       })
     },
-    dateformat(time) {
+    dateformat (time) {
       const expire = new Date(time).getTime()
       const now = new Date().getTime()
       if (expire > now) {
@@ -111,8 +131,9 @@ export default {
     background-color: #fff;
     box-shadow: 0px 0px 10px 0px rgb(49 149 255 / 6%);
     img {
-      width: 100%;
-      border-radius: $radius $radius 0 0;
+      width: 80%;
+      border: 1px solid #ccc;
+      border-radius: 50%;
     }
     .info {
       position: relative;

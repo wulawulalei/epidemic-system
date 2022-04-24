@@ -17,10 +17,14 @@ service.interceptors.request.use(
   (config) => {
     const token = store.getters.token
     if (config.method === 'post') {
-      config.data = qs.stringify({
-        ...config.data,
-        token
-      })
+      if (config.url === '/user/img-modify') {
+        config.headers['content-Type'] = 'multipart/form-data'
+      } else {
+        config.data = qs.stringify({
+          ...config.data,
+          token
+        })
+      }
     } else if (config.method === 'get') {
       config.params = qs.stringify({
         ...config.params,

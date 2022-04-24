@@ -2,7 +2,9 @@
   <div id="register">
     <div class="remind">
       <h4>登记检测</h4>
-      <p>该数据表为住户本人的核酸检测情况表，可自行添加当前最新的核酸检测结果</p>
+      <p>
+        该数据表为住户本人的核酸检测情况表，可自行添加当前最新的核酸检测结果
+      </p>
       <p>
         添加一个新的核酸检测结果，
         <span @click="showAdd = true" class="add">点击这里进行添加</span>
@@ -30,28 +32,38 @@
     >
       <!-- 姓名列 -->
       <el-table-column prop="name" label="姓名">
-        <template slot-scope="scope">{{ scope.row.name || "-" }}</template>
+        <template slot-scope="scope">{{ scope.row.name || '-' }}</template>
       </el-table-column>
       <!-- 住址列 -->
       <el-table-column prop="address" label="住址">
-        <template
-          slot-scope="scope"
-        >{{ scope.row.address==0?'A区':scope.row.address==1?'B区':scope.row.address==2?'C区':scope.row.address==3?'D区':'-' || "-" }}</template>
+        <template slot-scope="scope">{{
+          scope.row.address == 0
+            ? 'A区'
+            : scope.row.address == 1
+            ? 'B区'
+            : scope.row.address == 2
+            ? 'C区'
+            : scope.row.address == 3
+            ? 'D区'
+            : '-' || '-'
+        }}</template>
       </el-table-column>
       <!-- 电话列 -->
       <el-table-column prop="sex" label="电话">
-        <template slot-scope="scope">{{ scope.row.phone || "-" }}</template>
+        <template slot-scope="scope">{{ scope.row.phone || '-' }}</template>
       </el-table-column>
       <!-- 检测结果列 -->
       <el-table-column prop="result" label="检测结果">
         <template slot-scope="scope">
-          <span :title="scope.row.result==0?'阴性':'阳性'">{{ scope.row.result==0?'阴性':'阳性' || "-" }}</span>
+          <span :title="scope.row.result == 0 ? '阴性' : '阳性'">{{
+            scope.row.result == 0 ? '阴性' : '阳性' || '-'
+          }}</span>
         </template>
       </el-table-column>
       <!-- 检测时间列 -->
       <el-table-column prop="result" label="检测时间">
         <template slot-scope="scope">
-          <span :title="scope.row.time">{{ scope.row.time || "-" }}</span>
+          <span :title="scope.row.time">{{ scope.row.time || '-' }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -70,7 +82,7 @@ export default {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn
   },
-  data() {
+  data () {
     return {
       loading: true,
       showAdd: false,
@@ -82,32 +94,35 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   methods: {
-    init() {
+    init () {
       const send = {
         page: this.pagination.page,
         limit: this.pagination.limit
       }
       this.loading = true
-      getcheck(send).then(res => {
-        this.list = res.data.list
-        this.pagination.total = res.data.total
-        this.loading = false
-      }, () => {
-        this.loading = false
-      })
+      getcheck(send).then(
+        (res) => {
+          this.list = res.data.list
+          this.pagination.total = res.data.total
+          this.loading = false
+        },
+        () => {
+          this.loading = false
+        }
+      )
     },
-    handleCurrentChange() {
+    handleCurrentChange () {
       this.list = []
       this.init()
     }
   }
 }
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 #register {
   margin-top: 76px;
   padding: 0 30px;

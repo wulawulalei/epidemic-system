@@ -17,7 +17,11 @@
           />
           <label class="change-avatar" id="avatar">
             <i class="el-icon-plus"></i>
-            <input type="file" style="display: none" @change="changeAvatar($event)" />
+            <input
+              type="file"
+              style="display: none"
+              @change="changeAvatar($event)"
+            />
           </label>
         </div>
       </div>
@@ -37,7 +41,10 @@
         <label for="phone">联系电话</label>
         <input type="text" id="phone" v-model="phone" />
       </div>
-      <div class="group" :style="showVillageList ? { height: '320px' } : { height: 'unset' }">
+      <div
+        class="group"
+        :style="showVillageList ? { height: '320px' } : { height: 'unset' }"
+      >
         <label for>管理区号</label>
         <div class="choose">
           <div
@@ -58,20 +65,24 @@
                 v-for="item in villageList"
                 :key="item.id"
                 @click="changeType(item.id)"
-              >{{ item.title }}</div>
+              >
+                {{ item.title }}
+              </div>
             </div>
           </transition>
         </div>
       </div>
-      <ep-button @click.native="updateInfo" :disabled="!disabled">提交</ep-button>
+      <ep-button @click.native="updateInfo" :disabled="!disabled"
+        >提交</ep-button
+      >
     </div>
   </div>
 </template>
 <script>
-import { personal, usermodify } from '@/api/admin'
+import { personal, usermodify, avatarModify } from '@/api/admin'
 export default {
   name: 'personal',
-  data() {
+  data () {
     return {
       // 与本人相关的公告信息
       achievement: [
@@ -88,9 +99,9 @@ export default {
       src: '',
       // 名称
       name: '',
-      //账号
+      // 账号
       account: '',
-      //密码
+      // 密码
       password: '',
       // 手机号
       phone: '',
@@ -121,17 +132,17 @@ export default {
       ]
     }
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   computed: {
-    disabled() {
+    disabled () {
       return this.name && this.phone
     }
   },
   methods: {
-    init() {
-      personal().then(res => {
+    init () {
+      personal().then((res) => {
         const { personal, articlenum, readNum } = res.data
         this.name = personal.name
         this.src = personal.avatar || ''
@@ -143,19 +154,20 @@ export default {
         this.achievement[1].number = readNum
       })
     },
-    changeAvatar(e) {
+    changeAvatar (e) {
       const file = e.target.files[0]
-      let url
-      var reader = new FileReader()
-      reader.readAsDataURL(file)
-      const that = this
-      reader.onload = function (e) {
-        url = e.target.result.substring(this.result.indexOf(',') + 1)
-        that.src = 'data:image/png;base64,' + url
+      if (/image\//.test(file.type)) {
+        var formData = new FormData()
+        formData.append('img', file, `avatar-${this.account}`)
+        avatarModify(formData).then((res) => {
+          this.src = res.img
+        })
+      } else {
+        this.$toast('文件仅支持图片')
       }
     },
-    updateInfo() {
-      let send = {
+    updateInfo () {
+      const send = {
         account: this.account,
         name: this.name,
         phone: this.phone,
@@ -165,13 +177,15 @@ export default {
       }
       this.src && (send.avatar = this.src)
       this.password && (send.password = this.password)
-      usermodify(send).then(res => {
+      usermodify(send).then((res) => {
         this.$toast(res.message)
+        this.$store.commit('app/changeUsername', this.name)
+        this.src && this.$store.commit('app/changeAvatar', this.src)
         this.init()
       })
     },
     // 图标显示数据类型改变
-    changeType(id) {
+    changeType (id) {
       this.villageList.map((item) => {
         if (item.id === id) {
           this.village = id
@@ -182,7 +196,7 @@ export default {
   }
 }
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 #personal {
   .header {
     display: flex;

@@ -29,4 +29,7 @@ user.post('/personal', require('./common/personal-get'))
 // 修改个人信息
 user.post('/user-modify', require('./admin/user-modify'))
 
+// 更换图片
+user.post('/img-modify', require('./common/img-modify'))
+
 module.exports = user

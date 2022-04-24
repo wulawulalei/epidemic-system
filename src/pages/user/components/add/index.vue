@@ -23,9 +23,21 @@
         </div>
         <div class="group" v-if="$route.path == '/register'">
           <label>检测结果</label>
-          <input type="radio" name="checkResult" value="0" id="checkResult0" v-model="checkResult" />
+          <input
+            type="radio"
+            name="checkResult"
+            value="0"
+            id="checkResult0"
+            v-model="checkResult"
+          />
           <label for="checkResult0">阴性</label>
-          <input type="radio" name="checkResult" value="1" id="checkResult1" v-model="checkResult" />
+          <input
+            type="radio"
+            name="checkResult"
+            value="1"
+            id="checkResult1"
+            v-model="checkResult"
+          />
           <label for="checkResult1">阳性</label>
         </div>
         <div class="group" v-if="$route.path == '/register'">
@@ -40,7 +52,9 @@
             :picker-options="pickerOptions"
           ></el-date-picker>
         </div>
-        <ep-button @click.native="addItem" :disabled="!disabled">提交</ep-button>
+        <ep-button @click.native="addItem" :disabled="!disabled"
+          >提交</ep-button
+        >
       </div>
     </div>
   </transition>
@@ -58,48 +72,53 @@ export default {
   components: {
     [DatePicker.name]: DatePicker
   },
-  data() {
+  data () {
     return {
-      //用户账号
+      // 用户账号
       account: '',
-      //外出原因
+      // 外出原因
       result: '',
-      //核酸检测时间
+      // 核酸检测时间
       checkTime: '',
-      //核酸检测结果
+      // 核酸检测结果
       checkResult: 0,
-      //返区时间
+      // 返区时间
       time: '',
-      //不能选择当前日期之后的时间
+      // 不能选择当前日期之后的时间
       pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
+        disabledDate (time) {
+          return time.getTime() > Date.now()
         }
-      },
+      }
     }
   },
-  mounted() {
+  mounted () {
     this.getAccount()
   },
   computed: {
-    disabled() {
-      return this.$route.path == '/goout' && this.result && this.time || this.$route.path == '/register' && this.checkResult !== '' && this.checkTime
+    disabled () {
+      return (
+        (this.$route.path === '/goout' && this.result && this.time) ||
+        (this.$route.path === '/register' &&
+          this.checkResult !== '' &&
+          this.checkTime)
+      )
     }
   },
   methods: {
-    hidden() {
+    hidden () {
       this.$emit('update:show', false)
     },
     // 添加信息
-    addItem() {
+    addItem () {
       if (this.$route.path === '/goout') {
         const send = {
           account: this.account,
           result: this.result,
           time: this.time
         }
-        addapply(send).then(res => {
-          if (res.code == 200) {
+        addapply(send).then((res) => {
+          if (res.code === 200) {
             this.$toast(res.message)
             this.$emit('init')
             this.$emit('update:show', false)
@@ -108,9 +127,13 @@ export default {
           }
         })
       } else if (this.$route.path === '/register') {
-        const send = { account: this.account, time: this.checkTime, result: this.checkResult }
-        addcheck(send).then(res => {
-          if (res.code == 200) {
+        const send = {
+          account: this.account,
+          time: this.checkTime,
+          result: this.checkResult
+        }
+        addcheck(send).then((res) => {
+          if (res.code === 200) {
             this.$toast(res.message)
             this.$emit('init')
             this.$emit('update:show', false)
@@ -120,9 +143,9 @@ export default {
         })
       }
     },
-    //获取账号
-    getAccount() {
-      personal().then(res => {
+    // 获取账号
+    getAccount () {
+      personal().then((res) => {
         this.account = res.data.account
       })
     }

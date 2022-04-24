@@ -29,7 +29,7 @@
   </div>
 </template>
 <script>
-import { addarticle } from '@/api/admin'
+import { addarticle, avatarModify } from '@/api/admin'
 export default {
   name: 'editannount',
   data () {
@@ -45,7 +45,7 @@ export default {
       account: ''
     }
   },
-  created () {
+  mounted () {
     this.author = this.$store.getters.username
     this.account = this.$store.getters.account
   },
@@ -71,13 +71,14 @@ export default {
     // 选择封面后的回调
     showImg (e) {
       const file = e.target.files[0]
-      let url
-      var reader = new FileReader()
-      reader.readAsDataURL(file)
-      const that = this
-      reader.onload = function (e) {
-        url = e.target.result.substring(this.result.indexOf(',') + 1)
-        that.cover = 'data:image/png;base64,' + url
+      if (/image\//.test(file.type)) {
+        var formData = new FormData()
+        formData.append('img', file, `article-${this.title}`)
+        avatarModify(formData).then((res) => {
+          this.cover = res.img
+        })
+      } else {
+        this.$toast('文件仅支持图片')
       }
     },
     // 发布公告
@@ -89,15 +90,15 @@ export default {
         content: this.content,
         account: this.account
       }
-      addarticle(send).then(res => {
+      addarticle(send).then((res) => {
         this.$toast(res.message)
-        this.$router.path('/notice')
+        this.$router.push('/notice')
       })
     }
   }
 }
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 #editannount {
   padding-top: 20px;
   .group {

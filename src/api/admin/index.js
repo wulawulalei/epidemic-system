@@ -45,3 +45,6 @@ export const addarticle = (data) => rPost('/admin/article-add', data)
 
 // 获取个人信息
 export const personal = (data) => rPost('/admin/personal', data)
+
+// 更换图片
+export const avatarModify = (data) => rPost('/user/img-modify', data)

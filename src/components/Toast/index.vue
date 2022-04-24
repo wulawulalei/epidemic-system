@@ -13,13 +13,13 @@ export default {
       require: true
     }
   },
-  data() {
+  data () {
     return {
       isShow: false
     }
   },
   methods: {
-    showToast() {
+    showToast () {
       this.isShow = true
       return this
     }

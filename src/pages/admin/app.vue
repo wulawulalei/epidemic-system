@@ -1,41 +1,56 @@
 <template>
-  <div id="admin">
-    <div class="main">
-      <div class="nav">
-        <div class="title">疫情防控管理系统</div>
-        <div class="nav-list">
-          <div
-            class="nav-item"
-            v-for="(item, index) in nav"
-            :key="index"
-            @click="changeroute(item.path)"
-            :class="key == item.path ? 'select' : ''"
-          >
-            <i class="iconfont" :class="item.icon"></i>
-            <div class="name">{{ item.name }}</div>
+  <div class="container">
+    <div id="admin" v-if="!loading">
+      <div class="main">
+        <div class="nav">
+          <div class="title">疫情防控管理系统</div>
+          <div class="nav-list">
+            <div
+              class="nav-item"
+              v-for="(item, index) in nav"
+              :key="index"
+              @click="changeroute(item.path)"
+              :class="key == item.path ? 'select' : ''"
+            >
+              <i class="iconfont" :class="item.icon"></i>
+              <div class="name">{{ item.name }}</div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="container">
-        <div class="header">
-          <div class="greet">{{ greeting }}，欢迎来到疫情防控管理系统</div>
-          <div class="user">
-            <img :src="avatar ? avatar : require('@/assets/common/default-avatar.png')" alt="头像" />
-            <span class="name">{{name}}</span>
-            <div class="out" @click="loginOut">退出登陆</div>
+        <div class="container">
+          <div class="header">
+            <div class="greet">{{ greeting }}，欢迎来到疫情防控管理系统</div>
+            <div class="user">
+              <img
+                :src="
+                  avatar
+                    ? avatar
+                    : require('@/assets/common/default-avatar.png')
+                "
+                alt="头像"
+              />
+              <span class="name">{{ name }}</span>
+              <div class="out" @click="showExit = true">退出登陆</div>
+            </div>
           </div>
+          <transition name="fade-transform" mode="out-in">
+            <router-view :key="key" />
+          </transition>
         </div>
-        <transition name="fade-transform" mode="out-in">
-          <router-view :key="key" />
-        </transition>
       </div>
+      <Exit :show.sync="showExit" />
+    </div>
+    <div class="loading" v-if="loading">
+      <i class="el-icon-loading"></i>
     </div>
   </div>
 </template>
 <script>
-// import { intercept } from '@/mixins/intercept.js'
+import { intercept } from '@/mixins/intercept.js'
+const Exit = () => import('@/components/exit')
 export default {
   name: 'App',
+  components: { Exit },
   data () {
     return {
       nav: [
@@ -76,12 +91,18 @@ export default {
         }
       ],
       avatar: '',
-      name: ''
+      name: '',
+      loading: true,
+      showExit: false
     }
   },
-  created () {
-    this.avatar = this.$store.getters.avatar
-    this.name = this.$store.getters.username
+  watch: {
+    '$store.getters.avatar' (val) {
+      this.avatar = val
+    },
+    '$store.getters.username' (val) {
+      this.name = val
+    }
   },
   computed: {
     greeting: () => {
@@ -114,14 +135,9 @@ export default {
       if (path !== this.$route.path) {
         this.$router.push(path)
       }
-    },
-    loginOut () {
-      this.$toast('成功退出登陆')
-      localStorage.setItem('token', '')
-      window.location.pathname = '/login.html'
     }
-  }
-  // mixins: [intercept]
+  },
+  mixins: [intercept]
 }
 </script>
 <style lang="scss" scoped>

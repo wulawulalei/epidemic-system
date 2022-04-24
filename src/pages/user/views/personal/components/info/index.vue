@@ -10,7 +10,11 @@
         />
         <label class="change-avatar" id="avatar">
           <i class="el-icon-plus"></i>
-          <input type="file" style="display: none" @change="changeAvatar($event)" />
+          <input
+            type="file"
+            style="display: none"
+            @change="changeAvatar($event)"
+          />
         </label>
       </div>
     </div>
@@ -30,7 +34,10 @@
       <label for="phone">联系电话</label>
       <input type="text" id="phone" v-model="phone" />
     </div>
-    <div class="group" :style="showVillageList ? { height: '320px' } : { height: 'unset' }">
+    <div
+      class="group"
+      :style="showVillageList ? { height: '320px' } : { height: 'unset' }"
+    >
       <label for>居住区号</label>
       <div class="choose">
         <div
@@ -51,26 +58,31 @@
               v-for="item in villageList"
               :key="item.id"
               @click="changeType(item.id)"
-            >{{ item.title }}</div>
+            >
+              {{ item.title }}
+            </div>
           </div>
         </transition>
       </div>
     </div>
-    <ep-button @click.native="updateInfo">提交</ep-button>
+    <ep-button @click.native="updateInfo" :disabled="!canRequest">
+      提交
+    </ep-button>
   </div>
 </template>
+
 <script>
-import { personal, modifyuser } from '@/api/user'
+import { personal, modifyuser, avatarModify } from '@/api/user'
 export default {
-  data() {
+  data () {
     return {
       // 头像
       src: '',
       // 名称
       name: '',
-      //账号
+      // 账号
       account: '',
-      //密码
+      // 密码
       password: '',
       // 手机号
       phone: '',
@@ -97,15 +109,15 @@ export default {
           id: 3
         }
       ],
-      avatarFile: ''
+      canRequest: true
     }
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   methods: {
-    init() {
-      personal().then(res => {
+    init () {
+      personal().then((res) => {
         this.name = res.data.name
         this.src = res.data.avatar || ''
         this.account = res.data.account
@@ -113,35 +125,43 @@ export default {
         this.address = res.data.address
       })
     },
-    changeAvatar(e) {
+    changeAvatar (e) {
       const file = e.target.files[0]
-      this.avatarFile = file
-      // console.log(this.avatarFile);
-      let url
-      var reader = new FileReader()
-      reader.readAsDataURL(file)
-      const that = this
-      reader.onload = function (e) {
-        url = e.target.result.substring(this.result.indexOf(',') + 1)
-        that.src = 'data:image/png;base64,' + url
+      if (/image\//.test(file.type)) {
+        var formData = new FormData()
+        formData.append('img', file, `avatar-${this.account}`)
+        avatarModify(formData).then((res) => {
+          this.src = res.img
+        })
+      } else {
+        this.$toast('文件仅支持图片')
       }
     },
-    updateInfo() {
-      let send = {
+    updateInfo () {
+      const send = {
         account: this.account,
         name: this.name,
         phone: this.phone,
-        address: this.address,
+        address: this.address
       }
       this.password && (send.password = this.password)
-      this.src && (send.avatar = this.avatarFile)
-      modifyuser(send).then(res => {
-        this.$toast(res.message)
-        this.init()
-      })
+      this.src && (send.avatar = this.src)
+      this.canRequest = false
+      modifyuser(send).then(
+        (res) => {
+          this.$toast(res.message)
+          this.$store.commit('app/changeUsername', this.name)
+          this.src && this.$store.commit('app/changeAvatar', this.src)
+          this.init()
+          this.canRequest = true
+        },
+        () => {
+          this.canRequest = true
+        }
+      )
     },
     // 图标显示数据类型改变
-    changeType(id) {
+    changeType (id) {
       this.villageList.map((item) => {
         if (item.id === id) {
           this.address = id
@@ -152,6 +172,7 @@ export default {
   }
 }
 </script>
+
 <style lang="scss" scoped>
 .info {
   flex: 1;

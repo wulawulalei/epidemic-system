@@ -20,7 +20,7 @@
           layout="prev, pager, next,jumper"
         ></el-pagination>
       </div>
-      <div class="all-num">共{{pagination.total||0}}条</div>
+      <div class="all-num">共{{ pagination.total || 0 }}条</div>
     </div>
     <el-table
       :data="list"
@@ -31,42 +31,69 @@
     >
       <!-- 姓名列 -->
       <el-table-column prop="name" label="姓名">
-        <template slot-scope="scope">{{ scope.row.name || "-" }}</template>
+        <template slot-scope="scope">{{ scope.row.name || '-' }}</template>
       </el-table-column>
       <!-- 住址列 -->
       <el-table-column prop="address" label="住址">
-        <template
-          slot-scope="scope"
-        >{{ scope.row.address==0?'A区':scope.row.address==1?'B区':scope.row.address==2?'C区':scope.row.address==3?'D区':'-' || "-" }}</template>
+        <template slot-scope="scope">{{
+          scope.row.address == 0
+            ? 'A区'
+            : scope.row.address == 1
+            ? 'B区'
+            : scope.row.address == 2
+            ? 'C区'
+            : scope.row.address == 3
+            ? 'D区'
+            : '-' || '-'
+        }}</template>
       </el-table-column>
       <!-- 电话列 -->
       <el-table-column prop="sex" label="电话">
-        <template slot-scope="scope">{{ scope.row.phone || "-" }}</template>
+        <template slot-scope="scope">{{ scope.row.phone || '-' }}</template>
       </el-table-column>
       <!-- 外出原因列 -->
       <el-table-column prop="result" label="外出原因">
         <template slot-scope="scope">
-          <span :title="scope.row.result">{{ scope.row.result || "-" }}</span>
+          <span :title="scope.row.result">{{ scope.row.result || '-' }}</span>
         </template>
       </el-table-column>
       <!-- 返区时间列 -->
       <el-table-column prop="result" label="返区时间">
         <template slot-scope="scope">
-          <span :title="scope.row.time">{{ scope.row.time || "-" }}</span>
+          <span :title="scope.row.time">{{ scope.row.time || '-' }}</span>
         </template>
       </el-table-column>
       <!-- 申请状态列 -->
       <el-table-column prop="result" label="申请状态">
         <template slot-scope="scope">
           <span
-            :title="scope.row.status==0?'申请中':scope.row.status==1?'已通过':scope.row.status==2?'未通过':'-'"
-          >{{ scope.row.status==0?'申请中':scope.row.status==1?'已通过':scope.row.status==2?'未通过':'-' || "-" }}</span>
+            :title="
+              scope.row.status == 0
+                ? '申请中'
+                : scope.row.status == 1
+                ? '已通过'
+                : scope.row.status == 2
+                ? '未通过'
+                : '-'
+            "
+            >{{
+              scope.row.status == 0
+                ? '申请中'
+                : scope.row.status == 1
+                ? '已通过'
+                : scope.row.status == 2
+                ? '未通过'
+                : '-' || '-'
+            }}</span
+          >
         </template>
       </el-table-column>
       <!-- 申请失败原因列 -->
       <el-table-column prop="result" label="申请失败原因">
         <template slot-scope="scope">
-          <span :title="scope.row.status">{{ scope.row.failResult || "-" }}</span>
+          <span :title="scope.row.status">{{
+            scope.row.failResult || '-'
+          }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -85,7 +112,7 @@ export default {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn
   },
-  data() {
+  data () {
     return {
       loading: true,
       showAdd: false,
@@ -97,29 +124,32 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   methods: {
-    init() {
+    init () {
       const send = {
         page: this.pagination.page,
         limit: this.pagination.limit
       }
       this.loading = true
-      getapply(send).then(res => {
-        this.list = res.data.list
-        this.pagination.total = res.data.total
-        this.loading = false
-      }, () => {
-        this.loading = false
-      })
+      getapply(send).then(
+        (res) => {
+          this.list = res.data.list
+          this.pagination.total = res.data.total
+          this.loading = false
+        },
+        () => {
+          this.loading = false
+        }
+      )
     },
-    handleCurrentChange() {
+    handleCurrentChange () {
       this.list = []
       this.init()
     },
-    dateformat(time) {
+    dateformat (time) {
       const date = new Date(time)
       const year = date.getFullYear()
       let month = date.getMonth() + 1
@@ -131,7 +161,7 @@ export default {
   }
 }
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 #go-out {
   margin-top: 76px;
   padding: 0 30px;

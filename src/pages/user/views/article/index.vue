@@ -2,20 +2,25 @@
   <div id="article">
     <div class="banner">
       <div class="info">
-        <div class="title">{{title}}</div>
+        <div class="title">{{ title }}</div>
         <div class="article-info">
-          <img class="avatar" :src="avatar?avatar:require('@/assets/common/default-avatar.png')" />
-          <span class="author">{{author}}</span>
+          <img
+            class="avatar"
+            :src="
+              avatar ? avatar : require('@/assets/common/default-avatar.png')
+            "
+          />
+          <span class="author">{{ author }}</span>
           ·
-          <span class="article-time">{{time}}</span>
+          <span class="article-time">{{ time }}</span>
           ·
-          <span class="read-num">{{read}}</span>
+          <span class="read-num">{{ read }}</span>
           次阅读
         </div>
       </div>
     </div>
     <div class="content">
-      <p v-for="(item,index) in content" :key="index">{{item}}</p>
+      <p v-for="(item, index) in content" :key="index">{{ item }}</p>
     </div>
   </div>
 </template>
@@ -23,7 +28,7 @@
 import { getarticle } from '@/api/user'
 export default {
   name: 'App',
-  data() {
+  data () {
     return {
       title: '',
       avatar: '',
@@ -33,14 +38,14 @@ export default {
       content: []
     }
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   methods: {
-    init() {
+    init () {
       getarticle({
         id: this.$route.params.id
-      }).then(res => {
+      }).then((res) => {
         const { title, author, content, publishdate, read, avatar } = res.data
         this.title = title
         this.author = author
@@ -50,7 +55,7 @@ export default {
         this.content = this.contentformat(content)
       })
     },
-    dateformat(time) {
+    dateformat (time) {
       const date = new Date(time)
       const year = date.getFullYear()
       let month = date.getMonth() + 1
@@ -59,7 +64,7 @@ export default {
       day = day > 9 ? day : '0' + day
       return `${year}-${month}-${day}`
     },
-    contentformat(content) {
+    contentformat (content) {
       let result = []
       if (content.indexOf('\n') > -1) {
         result = content.split('\n')
@@ -71,7 +76,7 @@ export default {
   }
 }
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 #article {
   margin-top: 75px;
   .banner {

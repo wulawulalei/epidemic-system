@@ -27,3 +27,6 @@ export const personal = (data) => rPost('/user/personal', data)
 
 // 修改个人信息
 export const modifyuser = (data) => rPost('/user/user-modify', data)
+
+// 更换图片
+export const avatarModify = (data) => rPost('/user/img-modify', data)

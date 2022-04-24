@@ -11,7 +11,7 @@ class moveBuildFilePlugin {
       // 记录删除dist和修改名称所用时间
       console.time('build and rename')
       // 先删除dist目录
-      rmdir(this.options.objectDir, error => {
+      rmdir(this.options.objectDir, (error) => {
         if (error) {
           console.log(error)
           return
@@ -32,10 +32,10 @@ function rmdir (filePath, callback) {
     if (stat.isFile()) {
       fs.unlink(filePath, callback)
     } else {
-      if (!/avatar/.test(filePath)) {
+      if (!/user-avatar/.test(filePath)) {
         fs.readdir(filePath, function (err, data) {
           if (err) return console.log(err)
-          const dirs = data.map(dir => path.join(filePath, dir))
+          const dirs = data.map((dir) => path.join(filePath, dir))
           let index = 0
           !(function next () {
             // 此处递归删除掉所有子文件 后删除当前 文件夹
@@ -46,6 +46,8 @@ function rmdir (filePath, callback) {
             }
           })()
         })
+      } else {
+        console.log(filePath, 1)
       }
     }
   })

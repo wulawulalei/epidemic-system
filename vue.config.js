@@ -1,9 +1,15 @@
 const titles = require('./titles.js')
 const glob = require('glob')
 const path = require('path')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const outputDir = path.join(__dirname, 'server/$web')
+const objectDir = path.join(__dirname, 'server/web')
+
+// const moveBuildFilePlugin = require('./build/move-build-plugin')
+// const BundleAnalyzerPlugin =
+//   require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const pages = {}
-const isProduction = process.env.NODE_ENV == 'production'
+const isProduction = process.env.BABEL_ENV === 'production'
+console.log(process.env.BABEL_ENV)
 
 glob.sync('./src/pages/**/app.js').forEach((entry) => {
   const chunk = entry.split('./src/pages/')[1].split('/app.js')[0]
@@ -19,8 +25,6 @@ glob.sync('./src/pages/**/app.js').forEach((entry) => {
 module.exports = {
   publicPath: isProduction ? './' : '',
   pages,
-  lintOnSave: false,
-  productionSourceMap: true,
   devServer: {
     port: 8080,
     proxy: {
@@ -40,16 +44,34 @@ module.exports = {
       }
     }
   },
-  outputDir: './server/web',
+  lintOnSave: false,
+  outputDir: objectDir,
   chainWebpack: (config) => {
     config.resolve.alias
       .set('@', resolve('src'))
       .set('assets', resolve('src/assets'))
       .set('components', resolve('src/components'))
 
+    // scss
+    const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
+    types.forEach((type) =>
+      addStyleResource(config.module.rule('scss').oneOf(type))
+    )
+
+    // img
+    config.module
+      .rule('images')
+      .test(/\.(jpg|png|gif)$/)
+      .use('url-loader')
+      .loader('url-loader')
+      .end()
+
     // build optimize
-    config.devtool(isProduction ? 'cheap-module-source-map' : 'cheap-module-eval-source-map')
+    config.devtool(
+      isProduction ? 'cheap-module-source-map' : 'cheap-module-eval-source-map'
+    )
     config.plugins.delete('named-chunks')
+    config.optimization.delete('splitChunks')
     config.optimization.splitChunks({
       cacheGroups: {
         common: {
@@ -76,25 +98,20 @@ module.exports = {
       }
     })
 
-    // scss
-    const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
-    types.forEach((type) =>
-      addStyleResource(config.module.rule('scss').oneOf(type))
-    )
-
-    // img
-    config.module
-      .rule('images')
-      .test(/\.(jpg|png|gif)$/)
-      .use('url-loader')
-      .loader('url-loader')
-      .end()
-  },
-  configureWebpack: () => {
-    return {
-      plugins: [new BundleAnalyzerPlugin()]
-    }
+    // build dist
+    // isProduction &&
+    //   config.plugin('move-build-file').use(moveBuildFilePlugin, [
+    //     {
+    //       outputDir,
+    //       objectDir
+    //     }
+    //   ])
   }
+  // configureWebpack: () => {
+  //   return {
+  //     plugins: [new BundleAnalyzerPlugin()]
+  //   }
+  // }
 }
 
 function resolve (dir) {

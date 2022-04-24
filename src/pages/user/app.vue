@@ -1,32 +1,45 @@
 <template>
-  <div id="user">
-    <div class="scroll-top"></div>
-    <ul class="nav">
-      <li v-for="(item, index) in nav" :key="index" @click="to(item.to)">
-        <div class="menu" :class="$route.path == item.to ? 'select' : ''">{{ item.title }}</div>
-        <i></i>
-      </li>
-    </ul>
-    <router-view></router-view>
-    <div class="footer">Copyright © 2022 XZY</div>
+  <div class="container">
+    <div id="user" v-if="!loading">
+      <div class="scroll-top"></div>
+      <ul class="nav">
+        <li v-for="(item, index) in nav" :key="index" @click="to(item.to)">
+          <div class="menu" :class="$route.path == item.to ? 'select' : ''">
+            {{ item.title }}
+          </div>
+          <i></i>
+        </li>
+      </ul>
+      <div class="loginout" @click="showExit = true">退出</div>
+      <router-view></router-view>
+      <div class="footer">Copyright © 2022 XZY</div>
+      <Exit :show.sync="showExit" />
+    </div>
+    <div class="loading" v-if="loading">
+      <i class="el-icon-loading"></i>
+    </div>
   </div>
 </template>
 <script>
 import { intercept } from '@/mixins/intercept.js'
+const Exit = () => import('@/components/exit')
 export default {
   name: 'App',
-  data() {
+  components: { Exit },
+  data () {
     return {
       nav: [
         { title: '首页', to: '/dashboard' },
         { title: '外出申请', to: '/goout' },
         { title: '登记检测', to: '/register' },
         { title: '个人中心', to: '/personal' }
-      ]
+      ],
+      loading: false,
+      showExit: false
     }
   },
   methods: {
-    to(path) {
+    to (path) {
       if (path !== this.$route.path) {
         this.$router.push(path)
       }
@@ -35,8 +48,9 @@ export default {
   mixins: [intercept]
 }
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 #user {
+  position: relative;
   .scroll-top {
     position: fixed;
     top: 0;
@@ -87,6 +101,16 @@ export default {
           left: 0;
         }
       }
+    }
+  }
+  .loginout {
+    position: fixed;
+    top: 27px;
+    right: 36px;
+    cursor: pointer;
+    z-index: 9999;
+    &:hover {
+      color: $primary;
     }
   }
   .footer {

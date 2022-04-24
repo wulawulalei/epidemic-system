@@ -4,38 +4,43 @@
       <div class="details">
         <div class="item" v-for="(item, index) in epidList" :key="index">
           <h4>{{ item.title }}</h4>
-          <div class="number" :style="{ color: item.color }">{{ item.num }}</div>
+          <div class="number" :style="{ color: item.color }">
+            {{ item.num }}
+          </div>
           <p class="added">
             较昨日
             <span :style="{ color: item.color }">
-              {{
-              item.added > 0 ? "+" + item.added : item.added
-              }}
+              {{ item.added > 0 ? '+' + item.added : item.added }}
             </span>
           </p>
         </div>
       </div>
-    </div>
-    <div class="wave">
-      <div class="banner_wave_1"></div>
-      <div class="banner_wave_2"></div>
+      <div class="wave">
+        <div class="banner_wave_1"></div>
+        <div class="banner_wave_2"></div>
+      </div>
     </div>
     <div class="main">
-      <div class="item" v-for="item in list" :key="item.id" @click="toArticle(item._id)">
+      <div
+        class="item"
+        v-for="item in list"
+        :key="item.id"
+        @click="toArticle(item._id)"
+      >
         <div class="time">
           <i class="iconfont icon-shijian"></i>
-          发布于{{item.publishdate}}
+          发布于{{ item.publishdate }}
         </div>
         <div class="title">
           <i class="iconfont icon-timu-04"></i>
-          <span>{{item.title}}</span>
+          <span>{{ item.title }}</span>
         </div>
         <div class="meta">
           <i class="iconfont icon-zhanghao"></i>
           作者:
-          <span class="author">{{item.author}}</span>
+          <span class="author">{{ item.author }}</span>
         </div>
-        <div class="content">{{item.content}}</div>
+        <div class="content">{{ item.content }}</div>
       </div>
       <div class="pagination">
         <el-pagination
@@ -57,9 +62,9 @@ import { Pagination } from 'element-ui'
 export default {
   name: 'App',
   components: {
-    [Pagination.name]: Pagination,
+    [Pagination.name]: Pagination
   },
-  data() {
+  data () {
     return {
       epidList: [
         {
@@ -109,17 +114,17 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   methods: {
     // 初始化
-    init() {
+    init () {
       this.getEpidMessage()
       this.getArtilceList()
     },
     // 获取疫情信息
-    getEpidMessage() {
+    getEpidMessage () {
       epidemic().then((res) => {
         const input = res.data.chinaTotal.total.input
         const noSymptom = res.data.chinaTotal.extData.noSymptom
@@ -165,14 +170,14 @@ export default {
         })
       })
     },
-    //获取公告列表
-    getArtilceList() {
+    // 获取公告列表
+    getArtilceList () {
       const send = {
         page: this.pagination.page,
         limit: this.pagination.limit
       }
-      getarticle(send).then(res => {
-        this.list = res.data.list.map(item => {
+      getarticle(send).then((res) => {
+        this.list = res.data.list.map((item) => {
           item.publishdate = this.dateformat(item.publishdate)
           return item
         })
@@ -180,17 +185,17 @@ export default {
       })
     },
     // 跳转到文章页面
-    toArticle(params) {
+    toArticle (params) {
       this.$router.push({
         path: `/article/${params}`,
         params
       })
     },
-    handleCurrentChange() {
+    handleCurrentChange () {
       this.list = []
       this.init()
     },
-    dateformat(time) {
+    dateformat (time) {
       const date = new Date(time)
       const year = date.getFullYear()
       let month = date.getMonth() + 1
@@ -198,11 +203,11 @@ export default {
       let day = date.getDate()
       day = day > 9 ? day : '0' + day
       return `${year}-${month}-${day}`
-    },
+    }
   }
 }
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 #dashboard {
   .header {
     position: relative;
